@@ -24,6 +24,12 @@ pip3 install zensols.db
 Binaries are also available on [pypi].
 
 
+## Usage
+
+See the [use cases](dbutil/test/python/test_sqlite.py) for examples of how to
+use the API.
+
+
 ## Changelog
 
 An extensive changelog is available [here](CHANGELOG.md).
