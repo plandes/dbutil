@@ -3,7 +3,15 @@
 [![Travis CI Build Status][travis-badge]][travis-link]
 [![PyPI][pypi-badge]][pypi-link]
 
-A library of database convenience utilities, typically for creation of temporary files for processing large data.
+A library of database convenience utilities, typically for creation of
+temporary files for processing large data.
+
+Features:
+* DB-API Interface allows combined SQL rapid prototyping with backing
+  programmatic usage.
+* Java Beans like persistence.
+* Integration with [zensols.actioncli stash].
+* [SQLite] integration.
 
 
 ## Obtaining
@@ -50,3 +58,6 @@ SOFTWARE.
 [pypi]: https://pypi.org/project/zensols.db/
 [pypi-link]: https://pypi.python.org/pypi/zensols.db
 [pypi-badge]: https://img.shields.io/pypi/v/zensols.db.svg
+
+[zensols.actioncli stash]: https://github.com/plandes/actioncli/blob/master/src/python/zensols/actioncli/persist.py#L283
+[SQLite]: https://www.sqlite.org/index.html
