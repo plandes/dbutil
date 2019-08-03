@@ -161,9 +161,12 @@ class DbPersister(object):
         self._check_entry(entry_name)
         sql = self.sql_entries[entry_name]
         cur = conn.cursor()
-        cur.execute(sql, params)
-        conn.commit()
-        return cur.lastrowid
+        try:
+            cur.execute(sql, params)
+            conn.commit()
+            return cur.lastrowid
+        finally:
+            cur.close()
 
 
 class Bean(ABC):
@@ -282,28 +285,41 @@ class InsertableBeanDbPersister(ReadOnlyBeanDbPersister):
         return self.execute_no_read(conn, self.insert_name, params=row)
 
     @connection()
-    def insert_rows(self, conn, rows, errors='raise') -> int:
+    def insert_rows(self, conn, rows: list, errors='raise',
+                    set_id_fn=None, map_fn=None) -> int:
         """Insert a tuple of rows in the database and return the current row ID.
 
-        :param row: a sequence of tuples of data in column order of the SQL
+        :param row: a sequence of tuples of data (or an object to be
+                    transformed, see ``map_fn`` in column order of the SQL
                     provided by the entry ``insert_name``
+        :param errors: if this is the string ``raise`` then raise an error on
+                       any exception when invoking the database execute
+        :param map_fn: if not ``None``, used to transform the given row in to a
+                       tuple that is used for the insertion
 
         """
         entry_name = self.insert_name
         self._check_entry(entry_name)
         sql = self.sql_entries[entry_name]
         cur = conn.cursor()
-        for row in rows:
-            if errors == 'raise':
-                cur.execute(sql, row)
-            elif errors == 'ignore':
-                try:
+        try:
+            for row in rows:
+                if map_fn is not None:
+                    org_row = row
+                    row = map_fn(row)
+                if errors == 'raise':
                     cur.execute(sql, row)
-                except Exception as e:
-                    logger.error(f'could not insert row ({len(row)})', e)
-            else:
-                raise ValueError(f'unknown errors value: {errors}')
-        conn.commit()
+                elif errors == 'ignore':
+                    try:
+                        cur.execute(sql, row)
+                    except Exception as e:
+                        logger.error(f'could not insert row ({len(row)})', e)
+                else:
+                    raise ValueError(f'unknown errors value: {errors}')
+                if set_id_fn is not None:
+                    set_id_fn(org_row, cur.lastrowid)
+        finally:
+            conn.commit()
         return cur.lastrowid
 
     def insert(self, bean: Bean) -> int:
@@ -316,16 +332,21 @@ class InsertableBeanDbPersister(ReadOnlyBeanDbPersister):
         bean.id = curid
         return curid
 
-    def insert_beans(self, beans: list) -> int:
+    def insert_beans(self, beans: list, errors='raise') -> int:
         """Insert a bean using the order of the values given in ``get_insert_row`` as
         that of the SQL defined with entry ``insert_name`` given in the
         initializer.
 
         """
-        curid = None
-        for bean in beans:
-            curid = self.insert(bean)
-        return curid
+        def map_fn(bean):
+            return bean.get_insert_row()
+
+        def set_id_fn(bean, id):
+            pass
+            #bean.id = id
+
+        return self.insert_rows(beans, errors, set_id_fn, map_fn)
+        # return curid
 
 
 class UpdatableBeanDbPersister(InsertableBeanDbPersister):

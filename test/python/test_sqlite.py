@@ -96,6 +96,9 @@ class TestSqlLite(unittest.TestCase):
         self.assertEqual('id: 2, name: sue, age: 33', str(peeps[1]))
         new_peeps = (('bob', 42), ('jane', 90),)
         self.assertEqual(4, persister.insert_rows(new_peeps))
+        peeps = persister.get()
+        self.assertEqual({'id': 3, 'name': 'bob', 'age': 42}, peeps[0].get_attrs())
+        self.assertEqual({'id': 4, 'name': 'jane', 'age': 90}, peeps[1].get_attrs())
         bean = Person('kyle', 52)
         self.assertEqual(None, bean.id)
         self.assertEqual(5, persister.insert(bean))
@@ -120,6 +123,12 @@ class TestSqlLite(unittest.TestCase):
         self.assertEqual(((4,),), persister.execute_by_name('people_count'))
         self.assertEqual(4, persister.get_count())
         self.assertEqual((1, 3, 4, 5), tuple(persister.get_keys()))
+        new_peeps = (Person('jake', 62), Person('christina', 22),)
+        self.assertEqual(7, persister.insert_beans(new_peeps))
+        peeps = persister.get()
+        self.assertEqual({'id': 6, 'name': 'jake', 'age': 62}, peeps[2].get_attrs())
+        self.assertEqual({'id': 7, 'name': 'christina', 'age': 22}, peeps[1].get_attrs())
+
 
     def test_stash(self):
         def key_change():
