@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+- More efficient bean insertion.
+- Better resource clean up.
+
 
 ## [0.0.1] - 2019-07-21
 ### Added
