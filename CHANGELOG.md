@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+
+## [0.0.3] - 2019-08-07
+### Changed
+- Refactor and clean up to allow for PostreSQL extension.
+
+
+## [0.0.2] - 2019-07-31
 ### Changed
 - More efficient bean insertion.
 - Better resource clean up.
@@ -18,5 +25,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/dbutil/compare/v0.0.1...HEAD
+[Unreleased]: https://github.com/plandes/dbutil/compare/v0.0.3...HEAD
+[0.0.3]: https://github.com/plandes/dbutil/compare/v0.0.2...v0.0.3
+[0.0.2]: https://github.com/plandes/dbutil/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/plandes/dbutil/compare/v0.0.0...v0.0.1
