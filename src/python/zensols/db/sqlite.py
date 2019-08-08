@@ -12,6 +12,8 @@ from zensols.db import (
     DbPersister,
     ConnectionManager,
     BeanDbPersister,
+    ConnectionManagerConfigurer,
+    DbPersisterFactory,
 )
 
 logger = logging.getLogger(__name__)
@@ -68,36 +70,13 @@ class SqliteConnectionManager(ConnectionManager):
         return False
 
 
-class ConfigSqliteDbPersisterFactory(ConfigFactory):
-    """A factory that creates SQLite based ``DbPersister``.
-
-    The following parameters are needed (in addition to the class name):
-      * sql_file: the text file that contains the SQL statements
-      * db_file: the path to the SQLite data file
-      * insert_name: the entry name of the SQL used to insert data
-      * select_name: the entry name of the SQL used to select/return data
-
-    """
-    INSTANCE_CLASSES = {}
-
-    def __init__(self, config):
-        super(ConfigSqliteDbPersisterFactory, self).__init__(
-            config, '{name}_db_persister')
-
-    def _class_name_params(self, name):
-        class_name, params = super(ConfigSqliteDbPersisterFactory, self).\
-            _class_name_params(name)
+class SqliteConnectionManagerConfigurer(ConnectionManagerConfigurer):
+    def configure(self, params):
         params['sql_file'] = Path(params['sql_file'])
         params['conn_manager'] = SqliteConnectionManager(
             Path(params['db_file']), None)
         del params['db_file']
-        return class_name, params
-
-    def _instance(self, cls, *args, **kwargs):
-        inst = super(ConfigSqliteDbPersisterFactory, self)._instance(
-            cls, *args, **kwargs)
-        inst.conn_manager.persister = inst
-        return inst
 
 
-ConfigSqliteDbPersisterFactory.register(BeanDbPersister)
+DbPersisterFactory.register_connection_manager_configurer(
+    SqliteConnectionManagerConfigurer, 'sqlite')

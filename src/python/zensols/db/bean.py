@@ -9,6 +9,7 @@ from abc import abstractmethod, ABC
 from zensols.actioncli import (
     resource,
     Stash,
+    ConfigFactory,
 )
 from zensols.db import DynamicDataParser
 
@@ -488,3 +489,50 @@ class BeanStash(Stash):
 
     def __len__(self):
         return self.persister.get_count()
+
+
+class ConnectionManagerConfigurer(ABC):
+    @abstractmethod
+    def configure(self, params):
+        pass
+
+
+class DbPersisterFactory(ConfigFactory):
+    """A factory that creates SQLite based ``DbPersister``.
+
+    The following parameters are needed (in addition to the class name):
+      * sql_file: the text file that contains the SQL statements
+      * db_file: the path to the SQLite data file
+      * insert_name: the entry name of the SQL used to insert data
+      * select_name: the entry name of the SQL used to select/return data
+
+    """
+    INSTANCE_CLASSES = {}
+    FACTORY_CLASSES = {}
+
+    def __init__(self, config):
+        super(DbPersisterFactory, self).__init__(
+            config, '{name}_db_persister')
+
+    @classmethod
+    def register_connection_manager_configurer(cls, instance_class, name):
+        cls.FACTORY_CLASSES[name] = instance_class
+
+    def _class_name_params(self, name):
+        class_name, params = super(DbPersisterFactory, self).\
+            _class_name_params(name)
+        conf_name = params['configurer']
+        conf_cls = self.FACTORY_CLASSES[conf_name]
+        conf_inst = conf_cls()
+        del params['configurer']
+        conf_inst.configure(params)
+        return class_name, params
+
+    def _instance(self, cls, *args, **kwargs):
+        inst = super(DbPersisterFactory, self)._instance(
+            cls, *args, **kwargs)
+        inst.conn_manager.persister = inst
+        return inst
+
+
+DbPersisterFactory.register(BeanDbPersister)

@@ -4,7 +4,7 @@ from pathlib import Path
 import shutil
 from config import AppConfig
 from zensols.db import (
-    ConfigSqliteDbPersisterFactory,
+    DbPersisterFactory,
     DbPersister,
     BeanStash,
 )
@@ -28,7 +28,7 @@ class PersonPersister(DbPersister):
         return self.execute(sql, row_factory=row_factory)
 
 
-ConfigSqliteDbPersisterFactory.register(PersonPersister)
+DbPersisterFactory.register(PersonPersister)
 
 
 class TestSqlLite(unittest.TestCase):
@@ -37,7 +37,7 @@ class TestSqlLite(unittest.TestCase):
         self.target_path = Path('./target')
         if self.target_path.exists():
             shutil.rmtree(self.target_path)
-        self.fac = ConfigSqliteDbPersisterFactory(self.config)
+        self.fac = DbPersisterFactory(self.config)
 
     def test_person_persister(self):
         persister = self.fac.instance('person')
@@ -118,7 +118,7 @@ class TestSqlLite(unittest.TestCase):
         def key_change():
             stash.dump('5', peep)
 
-        fac = ConfigSqliteDbPersisterFactory(self.config)
+        fac = DbPersisterFactory(self.config)
         persister = fac.instance('inst', row_factory=Person)
         stash = BeanStash(persister)
         db_path = Path(self.target_path, 'sql-test2.db')
