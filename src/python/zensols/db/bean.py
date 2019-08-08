@@ -24,7 +24,7 @@ class connection(resource):
             '_create_connection', '_dispose_connection')
 
 
-class ConnectionFactory(ABC):
+class ConnectionManager(ABC):
     """Instance DB-API connection lifecycle.
 
     """
@@ -41,45 +41,6 @@ class ConnectionFactory(ABC):
         """
         conn.close()
 
-
-class DbPersister(object):
-    """CRUDs data to/from a DB-API connection.
-
-    """
-    def __init__(self, sql_file: Path, conn_factory: ConnectionFactory):
-        """Initialize.
-
-        :param sql_file: the text file containing the SQL statements (see
-                         ``DynamicDataParser``)
-        :param conn_factory: used to create DB-API connections
-
-        """
-        self.parser = DynamicDataParser(sql_file)
-        self.conn_factory = conn_factory
-
-    @property
-    def sql_entries(self) -> dict:
-        """Return a dictionary of names -> SQL statements.
-
-        """
-        return self.parser.sections
-
-    def _create_connection(self):
-        """Create a connection to the database.
-
-        """
-        logger.debug(f'creating connection')
-        return self.conn_factory.create()
-
-    def _dispose_connection(self, conn):
-        """Close the connection to the database.
-
-        :param conn: the connection to release
-
-        """
-        logger.debug(f'closing connection {conn}')
-        self.conn_factory.dispose(conn)
-
     @staticmethod
     def _dict_factory(cursor, row):
         d = {}
@@ -87,25 +48,8 @@ class DbPersister(object):
             d[col[0]] = row[idx]
         return d
 
-    def _check_entry(self, name):
-        if name is None:
-            raise ValueError(f'no defined SQL entry for persist function')
-        if len(name) == 0:
-            raise ValueError(f"non-optional entry not provided")
-        if name not in self.sql_entries:
-            raise ValueError(f"no entry '{name}' found in SQL configuration")
-
-    @connection()
-    def execute(self, conn, sql, params=(), row_factory='tuple', map_fn=None):
-        """Execute SQL on a database connection.
-
-        :param conn: the connection object with the database
-        :param sql: the string SQL to execute
-        :param params: the parameters given to the SQL statement (populated
-                       with ``?``) in the statement
-        :param row_factory: informs how to create result sets; ``dict`` for
-                            dictionaries, ``tuple`` for tuples otherwise a
-                            function or class (default to tuples)
+    def execute(self, conn, sql, params, row_factory, map_fn):
+        """See ``DbPersister.execute``.
 
         """
         def second(cursor, row):
@@ -128,6 +72,107 @@ class DbPersister(object):
             return tuple(res)
         finally:
             cur.close()
+
+    def execute_no_read(self, conn, sql, params) -> int:
+        """See ``DbPersister.execute_no_read``.
+
+        """
+        cur = conn.cursor()
+        try:
+            cur.execute(sql, params)
+            conn.commit()
+            return cur.lastrowid
+        finally:
+            cur.close()
+
+    def insert_rows(self, conn, sql, rows: list, errors: str,
+                    set_id_fn, map_fn) -> int:
+        """See ``InsertableBeanDbPersister.insert_rows``.
+
+        """
+        cur = conn.cursor()
+        try:
+            for row in rows:
+                if map_fn is not None:
+                    org_row = row
+                    row = map_fn(row)
+                if errors == 'raise':
+                    cur.execute(sql, row)
+                elif errors == 'ignore':
+                    try:
+                        cur.execute(sql, row)
+                    except Exception as e:
+                        logger.error(f'could not insert row ({len(row)})', e)
+                else:
+                    raise ValueError(f'unknown errors value: {errors}')
+                if set_id_fn is not None:
+                    set_id_fn(org_row, cur.lastrowid)
+        finally:
+            conn.commit()
+            cur.close()
+        return cur.lastrowid
+
+
+class DbPersister(object):
+    """CRUDs data to/from a DB-API connection.
+
+    """
+    def __init__(self, sql_file: Path, conn_manager: ConnectionManager):
+        """Initialize.
+
+        :param sql_file: the text file containing the SQL statements (see
+                         ``DynamicDataParser``)
+        :param conn_manager: used to create DB-API connections
+
+        """
+        self.parser = DynamicDataParser(sql_file)
+        self.conn_manager = conn_manager
+
+    @property
+    def sql_entries(self) -> dict:
+        """Return a dictionary of names -> SQL statements.
+
+        """
+        return self.parser.sections
+
+    def _create_connection(self):
+        """Create a connection to the database.
+
+        """
+        logger.debug(f'creating connection')
+        return self.conn_manager.create()
+
+    def _dispose_connection(self, conn):
+        """Close the connection to the database.
+
+        :param conn: the connection to release
+
+        """
+        logger.debug(f'closing connection {conn}')
+        self.conn_manager.dispose(conn)
+
+    def _check_entry(self, name):
+        if name is None:
+            raise ValueError(f'no defined SQL entry for persist function')
+        if len(name) == 0:
+            raise ValueError(f"non-optional entry not provided")
+        if name not in self.sql_entries:
+            raise ValueError(f"no entry '{name}' found in SQL configuration")
+
+    @connection()
+    def execute(self, conn, sql, params=(), row_factory='tuple', map_fn=None):
+        """Execute SQL on a database connection.
+
+        :param conn: the connection object with the database
+        :param sql: the string SQL to execute
+        :param params: the parameters given to the SQL statement (populated
+                       with ``?``) in the statement
+        :param row_factory: informs how to create result sets; ``dict`` for
+                            dictionaries, ``tuple`` for tuples otherwise a
+                            function or class (default to tuples)
+
+        """
+        return self.conn_manager.execute(conn, sql, params, row_factory, map_fn)
 
     def execute_by_name(self, name, params=(), row_factory='tuple',
                         map_fn=None):
@@ -154,19 +199,18 @@ class DbPersister(object):
         if len(res) > 0:
             return res[0]
 
+    @connection()
     def execute_no_read(self, conn, entry_name, params=()) -> int:
-        """Execute SQL returning the last row ID from the cursor.
+        """Execute SQL without reading data back.
+
+        :param entry_name: the key in the SQL file whose value is used as the
+                           statement
+        :param capture_rowid: if ``True`, return the last row ID from the cursor
 
         """
         self._check_entry(entry_name)
         sql = self.sql_entries[entry_name]
-        cur = conn.cursor()
-        try:
-            cur.execute(sql, params)
-            conn.commit()
-            return cur.lastrowid
-        finally:
-            cur.close()
+        return self.conn_manager.execute_no_read(conn, sql, params)
 
 
 class Bean(ABC):
@@ -274,15 +318,14 @@ class InsertableBeanDbPersister(ReadOnlyBeanDbPersister):
         super(InsertableBeanDbPersister, self).__init__(*args, **kwargs)
         self.insert_name = insert_name
 
-    @connection()
-    def insert_row(self, conn, *row) -> int:
+    def insert_row(self, *row) -> int:
         """Insert a row in the database and return the current row ID.
 
         :param row: a sequence of data in column order of the SQL provided by
                     the entry ``insert_name``
 
         """
-        return self.execute_no_read(conn, self.insert_name, params=row)
+        return self.execute_no_read(self.insert_name, params=row)
 
     @connection()
     def insert_rows(self, conn, rows: list, errors='raise',
@@ -301,26 +344,8 @@ class InsertableBeanDbPersister(ReadOnlyBeanDbPersister):
         entry_name = self.insert_name
         self._check_entry(entry_name)
         sql = self.sql_entries[entry_name]
-        cur = conn.cursor()
-        try:
-            for row in rows:
-                if map_fn is not None:
-                    org_row = row
-                    row = map_fn(row)
-                if errors == 'raise':
-                    cur.execute(sql, row)
-                elif errors == 'ignore':
-                    try:
-                        cur.execute(sql, row)
-                    except Exception as e:
-                        logger.error(f'could not insert row ({len(row)})', e)
-                else:
-                    raise ValueError(f'unknown errors value: {errors}')
-                if set_id_fn is not None:
-                    set_id_fn(org_row, cur.lastrowid)
-        finally:
-            conn.commit()
-        return cur.lastrowid
+        return self.conn_manager.insert_rows(
+            conn, sql, rows, errors, set_id_fn, map_fn)
 
     def insert(self, bean: Bean) -> int:
         """Insert a bean using the order of the values given in ``get_insert_row`` as
@@ -343,10 +368,8 @@ class InsertableBeanDbPersister(ReadOnlyBeanDbPersister):
 
         def set_id_fn(bean, id):
             pass
-            #bean.id = id
 
         return self.insert_rows(beans, errors, set_id_fn, map_fn)
-        # return curid
 
 
 class UpdatableBeanDbPersister(InsertableBeanDbPersister):
@@ -366,14 +389,13 @@ class UpdatableBeanDbPersister(InsertableBeanDbPersister):
         self.update_name = update_name
         self.delete_name = delete_name
 
-    @connection()
-    def update_row(self, conn, *row) -> int:
+    def update_row(self, *row) -> int:
         """Update a row using the values of the row with the current unique ID as the
         first element in ``*rows``.
 
         """
         where_row = (*row[1:], row[0])
-        return self.execute_no_read(conn, self.update_name, params=where_row)
+        return self.execute_no_read(self.update_name, params=where_row)
 
     def update(self, bean: Bean) -> int:
         """Update a a bean that using the ``id`` attribute and its attributes as
@@ -382,12 +404,11 @@ class UpdatableBeanDbPersister(InsertableBeanDbPersister):
         """
         return self.update_row(*bean.get_row())
 
-    @connection()
-    def delete(self, conn, id) -> int:
+    def delete(self, id) -> int:
         """Delete a row by ID.
 
         """
-        return self.execute_no_read(conn, self.delete_name, params=(id,))
+        return self.execute_no_read(self.delete_name, params=(id,))
 
 
 class BeanDbPersister(UpdatableBeanDbPersister):

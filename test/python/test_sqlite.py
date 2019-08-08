@@ -4,11 +4,12 @@ from pathlib import Path
 import shutil
 from config import AppConfig
 from zensols.db import (
-    connection,
-    DbPersister,
-    Bean,
     ConfigSqliteDbPersisterFactory,
+    DbPersister,
     BeanStash,
+)
+from sql import (
+    Person,
 )
 
 logger = logging.getLogger(__name__)
@@ -18,24 +19,9 @@ if 0:
     logger.setLevel(logging.DEBUG)
 
 
-class Person(Bean):
-    def __init__(self, name, age, id=None):
-        self.id = id
-        self.name = name
-        self.age = age
-
-    def get_attr_names(self):
-        return 'id name age'.split()
-
-
 class PersonPersister(DbPersister):
-    @connection()
-    def insert_row(self, conn, name: str, age: int):
-        sql = self.sql_entries['insert_person']
-        cur = conn.cursor()
-        cur.execute(sql, (name, age))
-        conn.commit()
-        return cur.lastrowid
+    def insert_row(self, name: str, age: int):
+        return self.execute_no_read('insert_person', params=(name, age,))
 
     def get(self, row_factory='tuple'):
         sql = self.sql_entries['select_people']
@@ -51,17 +37,17 @@ class TestSqlLite(unittest.TestCase):
         self.target_path = Path('./target')
         if self.target_path.exists():
             shutil.rmtree(self.target_path)
+        self.fac = ConfigSqliteDbPersisterFactory(self.config)
 
     def test_person_persister(self):
-        fac = ConfigSqliteDbPersisterFactory(self.config)
-        persister = fac.instance('person')
+        persister = self.fac.instance('person')
         db_path = Path(self.target_path, 'sql-test1.db')
         self.assertFalse(db_path.exists())
         self.assertEqual(1, persister.insert_row('paul', 23))
         self.assertEqual(2, persister.insert_row('sue', 33))
         self.assertTrue(db_path.exists())
         peeps = persister.get('dict')
-        self.assertTrue(2, len(peeps))
+        self.assertEqual(2, len(peeps))
         self.assertEqual({'id': 1, 'name': 'paul', 'age': 23}, peeps[0])
         self.assertEqual({'id': 2, 'name': 'sue', 'age': 33}, peeps[1])
         peeps = persister.get('tuple')
@@ -69,12 +55,11 @@ class TestSqlLite(unittest.TestCase):
         peeps = persister.get(Person)
         self.assertEqual('id: 1, name: paul, age: 23', str(peeps[0]))
         self.assertEqual('id: 2, name: sue, age: 33', str(peeps[1]))
-        persister.conn_factory.delete_file()
+        persister.conn_manager.delete_file()
         self.assertFalse(db_path.exists())
 
     def test_inst_persister(self):
-        fac = ConfigSqliteDbPersisterFactory(self.config)
-        persister = fac.instance('inst', row_factory=Person)
+        persister = self.fac.instance('inst', row_factory=Person)
         db_path = Path(self.target_path, 'sql-test2.db')
         self.assertFalse(db_path.exists())
         self.assertEqual(0, persister.get_count())
@@ -128,7 +113,6 @@ class TestSqlLite(unittest.TestCase):
         peeps = persister.get()
         self.assertEqual({'id': 6, 'name': 'jake', 'age': 62}, peeps[2].get_attrs())
         self.assertEqual({'id': 7, 'name': 'christina', 'age': 22}, peeps[1].get_attrs())
-
 
     def test_stash(self):
         def key_change():

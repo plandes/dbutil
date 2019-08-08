@@ -4,7 +4,7 @@
 create index person_name on person(name);
 
 -- name=create_tables
-create table person (uid, name text, age int);
+create table person (name text, age int);
 
 -- name=insert_person
 insert into person (name, age) values (?, ?);

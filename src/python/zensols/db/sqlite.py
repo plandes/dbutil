@@ -10,14 +10,14 @@ import sqlite3
 from zensols.actioncli import ConfigFactory
 from zensols.db import (
     DbPersister,
-    ConnectionFactory,
+    ConnectionManager,
     BeanDbPersister,
 )
 
 logger = logging.getLogger(__name__)
 
 
-class SqliteConnectionFactory(ConnectionFactory):
+class SqliteConnectionManager(ConnectionManager):
     """An SQLite connection factory.
 
     """
@@ -30,7 +30,7 @@ class SqliteConnectionFactory(ConnectionFactory):
                           (needed to get the initialization DDL SQL)
 
         """
-        super(SqliteConnectionFactory, self).__init__()
+        super(SqliteConnectionManager, self).__init__()
         self.db_file = db_file
         self.persister = persister
         self.create_db = create_db
@@ -88,7 +88,7 @@ class ConfigSqliteDbPersisterFactory(ConfigFactory):
         class_name, params = super(ConfigSqliteDbPersisterFactory, self).\
             _class_name_params(name)
         params['sql_file'] = Path(params['sql_file'])
-        params['conn_factory'] = SqliteConnectionFactory(
+        params['conn_manager'] = SqliteConnectionManager(
             Path(params['db_file']), None)
         del params['db_file']
         return class_name, params
@@ -96,7 +96,7 @@ class ConfigSqliteDbPersisterFactory(ConfigFactory):
     def _instance(self, cls, *args, **kwargs):
         inst = super(ConfigSqliteDbPersisterFactory, self)._instance(
             cls, *args, **kwargs)
-        inst.conn_factory.persister = inst
+        inst.conn_manager.persister = inst
         return inst
 
 
