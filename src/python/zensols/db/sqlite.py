@@ -7,11 +7,9 @@ __author__ = 'Paul Landes'
 import logging
 from pathlib import Path
 import sqlite3
-from zensols.actioncli import ConfigFactory
 from zensols.db import (
     DbPersister,
     ConnectionManager,
-    BeanDbPersister,
     ConnectionManagerConfigurer,
     DbPersisterFactory,
 )

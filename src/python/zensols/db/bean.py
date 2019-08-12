@@ -131,10 +131,16 @@ class DbPersister(object):
 
     @property
     def sql_entries(self) -> dict:
-        """Return a dictionary of names -> SQL statements.
+        """Return a dictionary of names -> SQL statements from the SQL file.
 
         """
         return self.parser.sections
+
+    @property
+    def metadata(self):
+        """Return the metadata associated with the SQL file.
+        """
+        return self.parser.meta
 
     def _create_connection(self):
         """Create a connection to the database.
@@ -199,6 +205,10 @@ class DbPersister(object):
         res = self.execute_by_name(*args, **kwargs)
         if len(res) > 0:
             return res[0]
+
+    @connection()
+    def execute_sql_no_read(self, conn, sql, params=()) -> int:
+        return self.conn_manager.execute_no_read(conn, sql, params)
 
     @connection()
     def execute_no_read(self, conn, entry_name, params=()) -> int:
