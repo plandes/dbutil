@@ -55,7 +55,7 @@ class TestSqlLite(unittest.TestCase):
         peeps = persister.get(Person)
         self.assertEqual('id: 1, name: paul, age: 23', str(peeps[0]))
         self.assertEqual('id: 2, name: sue, age: 33', str(peeps[1]))
-        persister.conn_manager.delete_file()
+        persister.conn_manager.drop()
         self.assertFalse(db_path.exists())
 
     def test_inst_persister(self):

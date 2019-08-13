@@ -57,7 +57,7 @@ class SqliteConnectionManager(ConnectionManager):
                 conn.commit()
         return conn
 
-    def delete_file(self):
+    def drop(self):
         """Delete the SQLite database file from the file system.
 
         """
