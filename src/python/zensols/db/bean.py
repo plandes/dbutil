@@ -267,6 +267,19 @@ class Bean(ABC):
         names = self.get_attr_names()
         return tuple(map(lambda x: getattr(self, x), names[1:]))
 
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            for n in self.get_attr_names():
+                if getattr(self, n) != getattr(other, n):
+                    return False
+            return True
+        else:
+            return False
+
+    def __hash__(self):
+        vals = tuple(map(lambda n: getattr(self, n), self.get_attr_names()))
+        return hash(vals)
+
     def __str__(self):
         return ', '.join(map(lambda x: f'{x}: {getattr(self, x)}',
                              self.get_attr_names()))
