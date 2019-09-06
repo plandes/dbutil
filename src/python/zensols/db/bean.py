@@ -270,13 +270,14 @@ class Bean(ABC):
     def __eq__(self, other):
         if other is None:
             return False
-        if isinstance(other, self.__class__):
-            for n in self.get_attr_names():
-                if getattr(self, n) != getattr(other, n):
-                    return False
+        if self is other:
             return True
-        else:
+        if self.__class__ != other.__class__:
             return False
+        for n in self.get_attr_names():
+            if getattr(self, n) != getattr(other, n):
+                return False
+        return True
 
     def __hash__(self):
         vals = tuple(map(lambda n: getattr(self, n), self.get_attr_names()))
