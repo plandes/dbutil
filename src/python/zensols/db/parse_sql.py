@@ -29,8 +29,8 @@ class DynamicDataParser(object):
          'create_tables,create_idx'}
     """
     COMMENT_PAT = re.compile(r'^--.*')
-    SEC_START_PAT = re.compile(r'^-- name=([a-zA-Z_]+)')
-    META_PAT = re.compile(r'^-- meta=([a-zA-Z_]+)=(.+)$')
+    SEC_START_PAT = re.compile(r'^-- name=([a-zA-Z0-9_]+)')
+    META_PAT = re.compile(r'^-- meta=([a-zA-Z0-9_]+)=(.+)$')
 
     def __init__(self, dd_path: Path):
         """Initialize.
