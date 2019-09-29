@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [0.0.4] - 2019-09-28
+### Changed
+- Better clear/delete functionality.
+- Bug fixes.
+
+
 ## [0.0.3] - 2019-08-07
 ### Changed
 - Refactor and clean up to allow for PostreSQL extension.
@@ -25,7 +31,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/dbutil/compare/v0.0.3...HEAD
+[Unreleased]: https://github.com/plandes/dbutil/compare/v0.0.4...HEAD
+[0.0.4]: https://github.com/plandes/dbutil/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/plandes/dbutil/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/plandes/dbutil/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/plandes/dbutil/compare/v0.0.0...v0.0.1
