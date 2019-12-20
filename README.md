@@ -12,6 +12,7 @@ Features:
 * Java Beans like persistence.
 * Integration with [zensols.actioncli stash].
 * [SQLite] integration.
+* [Postgresql] integration with the [dbutilpg] library.
 
 
 ## Obtaining
@@ -67,3 +68,6 @@ SOFTWARE.
 
 [zensols.actioncli stash]: https://github.com/plandes/actioncli/blob/master/src/python/zensols/actioncli/persist.py#L283
 [SQLite]: https://www.sqlite.org/index.html
+
+[Postgreql]: https://www.postgresql.org
+[dbutilpg]: https://github.com/plandes/dbutilpg
