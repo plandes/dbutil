@@ -2,6 +2,7 @@
 
 [![Travis CI Build Status][travis-badge]][travis-link]
 [![PyPI][pypi-badge]][pypi-link]
+[![Python 3.7][python37-badge]][python37-link]
 
 A library of database convenience utilities, typically for creation of
 temporary files for processing large data.
@@ -65,6 +66,8 @@ SOFTWARE.
 [pypi]: https://pypi.org/project/zensols.db/
 [pypi-link]: https://pypi.python.org/pypi/zensols.db
 [pypi-badge]: https://img.shields.io/pypi/v/zensols.db.svg
+[python37-badge]: https://img.shields.io/badge/python-3.7-blue.svg
+[python37-link]: https://www.python.org/downloads/release/python-370
 
 [zensols.actioncli stash]: https://github.com/plandes/actioncli/blob/master/src/python/zensols/actioncli/persist.py#L283
 [SQLite]: https://www.sqlite.org/index.html
