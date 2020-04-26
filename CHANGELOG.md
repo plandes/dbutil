@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+### Changed
+- Upgrade to ``zensols.util`` 1.2.0.
+
+
 ## [0.0.4] - 2019-09-28
 ### Changed
 - Better clear/delete functionality.

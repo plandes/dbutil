@@ -6,7 +6,7 @@ __author__ = 'Paul Landes'
 import logging
 from pathlib import Path
 from abc import abstractmethod, ABC
-from zensols.actioncli import (
+from zensols.persist import (
     resource,
     Stash,
     ConfigFactory,

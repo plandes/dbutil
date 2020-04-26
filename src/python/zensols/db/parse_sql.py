@@ -8,7 +8,7 @@ import logging
 import re
 import itertools as it
 from pathlib import Path
-from zensols.actioncli import persisted
+from zensols.persist import persisted
 
 logger = logging.getLogger(__name__)
 
