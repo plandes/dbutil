@@ -5,6 +5,7 @@ __author__ = 'Paul Landes'
 
 import logging
 from typing import Dict, Any
+from dataclasses import dataclass, field
 from pathlib import Path
 from abc import abstractmethod, ABC
 from zensols.persist import resource, Stash
@@ -129,21 +130,23 @@ class ConnectionManager(ABC):
         return cur.lastrowid
 
 
+@dataclass
 class DbPersister(object):
     """CRUDs data to/from a DB-API connection.
 
+    :param sql_file: the text file containing the SQL statements (see
+                     ``DynamicDataParser``)
+    :param conn_manager: used to create DB-API connections
     """
-    def __init__(self, sql_file: Path, conn_manager: ConnectionManager):
+    sql_file: Path
+    conn_manager: ConnectionManager
+
+    def __post_init__(self):
         """Initialize.
 
-        :param sql_file: the text file containing the SQL statements (see
-                         ``DynamicDataParser``)
-        :param conn_manager: used to create DB-API connections
-
         """
-        self.parser = DynamicDataParser(sql_file)
-        self.conn_manager = conn_manager
-        conn_manager.register_persister(self)
+        self.parser = DynamicDataParser(self.sql_file)
+        self.conn_manager.register_persister(self)
 
     @property
     def sql_entries(self) -> Dict[str, str]:
@@ -240,6 +243,7 @@ class DbPersister(object):
         return self.conn_manager.execute_no_read(conn, sql, params)
 
 
+@dataclass
 class Bean(ABC):
     """A container class like a Java *bean*.
 
@@ -296,26 +300,21 @@ class Bean(ABC):
         return self.__str__()
 
 
+@dataclass
 class ReadOnlyBeanDbPersister(DbPersister):
     """A read-only persister that CRUDs data based on predefined SQL given in the
     configuration.  The class optionally works with instances of ``Bean`` when
     ``row_factory`` is set to the target bean class.
 
+    :param select_name: the name of the SQL entry used to select data/class
+    :param row_factory: the row_factory parameter in ``get_all``
+                        when none is givne (see class docs)
     """
-    def __init__(self, *args, select_name: str = None, select_by_id: str = None,
-                 select_exists: str = None, row_factory='tuple', **kwargs):
-        """Initialize.
 
-        :param select_name: the name of the SQL entry used to select data/class
-        :param row_factory: the row_factory parameter in ``get_all``
-                            when none is givne (see class docs)
-
-        """
-        super().__init__(*args, **kwargs)
-        self.select_name = select_name
-        self.select_by_id = select_by_id
-        self.select_exists = select_exists
-        self.row_factory = row_factory
+    select_name: str = field(default=None)
+    select_by_id: str = field(default=None,)
+    select_exists: str = field(default=None)
+    row_factory: str = field(default='tuple')
 
     def get(self) -> list:
         """Return using the SQL provided by the entry ``select_name``.
@@ -347,19 +346,15 @@ class ReadOnlyBeanDbPersister(DbPersister):
             return cnt[0][0] == 1
 
 
+@dataclass
 class InsertableBeanDbPersister(ReadOnlyBeanDbPersister):
     """A class that contains insert funtionality.
 
+    :param insert_name: the name of the SQL entry used to insert data/class
+                        instance
+
     """
-    def __init__(self, *args, insert_name: str = None, **kwargs):
-        """Initialize.
-
-        :param insert_name: the name of the SQL entry used to insert data/class
-                            instance
-
-        """
-        super().__init__(*args, **kwargs)
-        self.insert_name = insert_name
+    insert_name: str = field(default=None)
 
     def insert_row(self, *row) -> int:
         """Insert a row in the database and return the current row ID.
@@ -415,22 +410,16 @@ class InsertableBeanDbPersister(ReadOnlyBeanDbPersister):
         return self.insert_rows(beans, errors, set_id_fn, map_fn)
 
 
+@dataclass
 class UpdatableBeanDbPersister(InsertableBeanDbPersister):
     """A class that contains the remaining CRUD funtionality the super class
     doesn't have.
 
+    :param update_name: the name of the SQL entry used to update data/class
+                        instance
     """
-    def __init__(self, *args, update_name: str = None, delete_name: str = None,
-                 **kwargs):
-        """Initialize.
-
-        :param update_name: the name of the SQL entry used to update data/class
-                            instance
-
-        """
-        super().__init__(*args, **kwargs)
-        self.update_name = update_name
-        self.delete_name = delete_name
+    update_name: str = field(default=None)
+    delete_name: str = field(default=None)
 
     def update_row(self, *row) -> int:
         """Update a row using the values of the row with the current unique ID as the
@@ -454,22 +443,16 @@ class UpdatableBeanDbPersister(InsertableBeanDbPersister):
         return self.execute_no_read(self.delete_name, params=(id,))
 
 
+@dataclass
 class BeanDbPersister(UpdatableBeanDbPersister):
     """A class that contains the remaining CRUD funtionality the super class
     doesn't have.
 
+    :param update_name: the name of the SQL entry used to update data/class
+                        instance
     """
-    def __init__(self, *args, keys_name: str = None, count_name: str = None,
-                 **kwargs):
-        """Initialize.
-
-        :param update_name: the name of the SQL entry used to update data/class
-                            instance
-
-        """
-        super().__init__(*args, **kwargs)
-        self.keys_name = keys_name
-        self.count_name = count_name
+    keys_name: str = field(default=None)
+    count_name: str = field(default=None)
 
     def get_keys(self) -> list:
         """Delete a row by ID.
@@ -490,6 +473,7 @@ class BeanDbPersister(UpdatableBeanDbPersister):
             return sum(1 for _ in self.get_keys())
 
 
+@dataclass
 class BeanStash(Stash):
     """A stash that uses a backing DB-API backed ``BeanDbPersister``.
 

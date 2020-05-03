@@ -5,6 +5,7 @@ the SQLite library.
 __author__ = 'Paul Landes'
 
 import logging
+from dataclasses import dataclass, field
 from pathlib import Path
 import sqlite3
 from zensols.db import ConnectionManager
@@ -12,21 +13,16 @@ from zensols.db import ConnectionManager
 logger = logging.getLogger(__name__)
 
 
+@dataclass
 class SqliteConnectionManager(ConnectionManager):
     """An SQLite connection factory.
 
+    :param db_file: the SQLite database file to read or create
+    :param persister: the persister that will use this connection factory
+                      (needed to get the initialization DDL SQL)
     """
-    def __init__(self, db_file: Path, create_db: bool = True):
-        """Initialize.
-
-        :param db_file: the SQLite database file to read or create
-        :param persister: the persister that will use this connection factory
-                          (needed to get the initialization DDL SQL)
-
-        """
-        super(SqliteConnectionManager, self).__init__()
-        self.db_file = db_file
-        self.create_db = create_db
+    db_file: Path
+    create_db: bool = field(default=True)
 
     def create(self):
         db_file = self.db_file
