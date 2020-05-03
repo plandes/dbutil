@@ -2,15 +2,14 @@ import logging
 import unittest
 from pathlib import Path
 import shutil
-from config import AppConfig
+from zensols.config import ImportConfigFactory
 from zensols.db import (
-    DbPersisterFactory,
+    #DbPersisterFactory,
     DbPersister,
     BeanStash,
 )
-from sql import (
-    Person,
-)
+from config import AppConfig
+from sql import Person
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +27,7 @@ class PersonPersister(DbPersister):
         return self.execute(sql, row_factory=row_factory)
 
 
-DbPersisterFactory.register(PersonPersister)
+#DbPersisterFactory.register(PersonPersister)
 
 
 class TestSqlLite(unittest.TestCase):
@@ -37,10 +36,10 @@ class TestSqlLite(unittest.TestCase):
         self.target_path = Path('./target')
         if self.target_path.exists():
             shutil.rmtree(self.target_path)
-        self.fac = DbPersisterFactory(self.config)
+        self.fac = ImportConfigFactory(self.config)
 
     def test_person_persister(self):
-        persister = self.fac.instance('person')
+        persister = self.fac.instance('person_db_persister')
         db_path = Path(self.target_path, 'sql-test1.db')
         self.assertFalse(db_path.exists())
         self.assertEqual(1, persister.insert_row('paul', 23))
@@ -59,7 +58,7 @@ class TestSqlLite(unittest.TestCase):
         self.assertFalse(db_path.exists())
 
     def test_inst_persister(self):
-        persister = self.fac.instance('inst', row_factory=Person)
+        persister = self.fac.instance('inst_db_persister', row_factory=Person)
         db_path = Path(self.target_path, 'sql-test2.db')
         self.assertFalse(db_path.exists())
         self.assertEqual(0, persister.get_count())
@@ -118,8 +117,7 @@ class TestSqlLite(unittest.TestCase):
         def key_change():
             stash.dump('5', peep)
 
-        fac = DbPersisterFactory(self.config)
-        persister = fac.instance('inst', row_factory=Person)
+        persister = self.fac.instance('inst_db_persister', row_factory=Person)
         stash = BeanStash(persister)
         db_path = Path(self.target_path, 'sql-test2.db')
         self.assertFalse(db_path.exists())

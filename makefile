@@ -5,6 +5,10 @@ PROJ_TYPE =		python
 
 include ./zenbuild/main.mk
 
+.PHONY:			testparse
+testparse:
+			make PY_SRC_TEST_PAT=test_parse.py test
+
 .PHONY:			testsqlite
 testsqlite:
-			make PY_SRC_TEST_PKGS=test_sqlite test
+			make PY_SRC_TEST_PAT=test_sqlite.py test

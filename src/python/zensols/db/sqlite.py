@@ -7,12 +7,7 @@ __author__ = 'Paul Landes'
 import logging
 from pathlib import Path
 import sqlite3
-from zensols.db import (
-    DbPersister,
-    ConnectionManager,
-    ConnectionManagerConfigurer,
-    DbPersisterFactory,
-)
+from zensols.db import ConnectionManager
 
 logger = logging.getLogger(__name__)
 
@@ -21,8 +16,7 @@ class SqliteConnectionManager(ConnectionManager):
     """An SQLite connection factory.
 
     """
-    def __init__(self, db_file: Path, persister: DbPersister,
-                 create_db: bool = True):
+    def __init__(self, db_file: Path, create_db: bool = True):
         """Initialize.
 
         :param db_file: the SQLite database file to read or create
@@ -32,7 +26,7 @@ class SqliteConnectionManager(ConnectionManager):
         """
         super(SqliteConnectionManager, self).__init__()
         self.db_file = db_file
-        self.persister = persister
+        #self.persister = persister
         self.create_db = create_db
 
     def create(self):
@@ -66,15 +60,3 @@ class SqliteConnectionManager(ConnectionManager):
             self.db_file.unlink()
             return True
         return False
-
-
-class SqliteConnectionManagerConfigurer(ConnectionManagerConfigurer):
-    def configure(self, params):
-        params['sql_file'] = Path(params['sql_file'])
-        params['conn_manager'] = SqliteConnectionManager(
-            Path(params['db_file']), None)
-        del params['db_file']
-
-
-DbPersisterFactory.register_connection_manager_configurer(
-    SqliteConnectionManagerConfigurer, 'sqlite')

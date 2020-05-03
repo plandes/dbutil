@@ -4,13 +4,10 @@
 __author__ = 'Paul Landes'
 
 import logging
+from typing import Dict, Any
 from pathlib import Path
 from abc import abstractmethod, ABC
-from zensols.persist import (
-    resource,
-    Stash,
-    ConfigFactory,
-)
+from zensols.persist import resource, Stash
 from zensols.db import DynamicDataParser
 
 logger = logging.getLogger(__name__)
@@ -21,14 +18,21 @@ class connection(resource):
 
     """
     def __init__(self):
-        super(connection, self).__init__(
-            '_create_connection', '_dispose_connection')
+        super().__init__('_create_connection', '_dispose_connection')
 
 
 class ConnectionManager(ABC):
     """Instance DB-API connection lifecycle.
 
     """
+    def register_persister(self, persister):
+        """Register the persister used for this connection manager.
+
+        :param persister: the persister used for connection management
+        :type persister: DbPersister
+        """
+        self.persister = persister
+
     @abstractmethod
     def create(self):
         """Create a connection to the database.
@@ -139,9 +143,10 @@ class DbPersister(object):
         """
         self.parser = DynamicDataParser(sql_file)
         self.conn_manager = conn_manager
+        conn_manager.register_persister(self)
 
     @property
-    def sql_entries(self) -> dict:
+    def sql_entries(self) -> Dict[str, str]:
         """Return a dictionary of names -> SQL statements from the SQL file.
 
         """
@@ -306,7 +311,7 @@ class ReadOnlyBeanDbPersister(DbPersister):
                             when none is givne (see class docs)
 
         """
-        super(ReadOnlyBeanDbPersister, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.select_name = select_name
         self.select_by_id = select_by_id
         self.select_exists = select_exists
@@ -353,7 +358,7 @@ class InsertableBeanDbPersister(ReadOnlyBeanDbPersister):
                             instance
 
         """
-        super(InsertableBeanDbPersister, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.insert_name = insert_name
 
     def insert_row(self, *row) -> int:
@@ -423,7 +428,7 @@ class UpdatableBeanDbPersister(InsertableBeanDbPersister):
                             instance
 
         """
-        super(UpdatableBeanDbPersister, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.update_name = update_name
         self.delete_name = delete_name
 
@@ -462,7 +467,7 @@ class BeanDbPersister(UpdatableBeanDbPersister):
                             instance
 
         """
-        super(BeanDbPersister, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.keys_name = keys_name
         self.count_name = count_name
 
@@ -492,10 +497,10 @@ class BeanStash(Stash):
     def __init__(self, persister: BeanDbPersister):
         self.persister = persister
 
-    def load(self, name: str):
+    def load(self, name: str) -> Any:
         return self.persister.get_by_id(int(name))
 
-    def exists(self, name: str):
+    def exists(self, name: str) -> bool:
         return self.persister.exists(int(name))
 
     def dump(self, name: str, inst):
@@ -526,50 +531,3 @@ class BeanStash(Stash):
 
     def __len__(self):
         return self.persister.get_count()
-
-
-class ConnectionManagerConfigurer(ABC):
-    @abstractmethod
-    def configure(self, params):
-        pass
-
-
-class DbPersisterFactory(ConfigFactory):
-    """A factory that creates SQLite based ``DbPersister``.
-
-    The following parameters are needed (in addition to the class name):
-      * sql_file: the text file that contains the SQL statements
-      * db_file: the path to the SQLite data file
-      * insert_name: the entry name of the SQL used to insert data
-      * select_name: the entry name of the SQL used to select/return data
-
-    """
-    INSTANCE_CLASSES = {}
-    FACTORY_CLASSES = {}
-
-    def __init__(self, config):
-        super(DbPersisterFactory, self).__init__(
-            config, '{name}_db_persister')
-
-    @classmethod
-    def register_connection_manager_configurer(cls, instance_class, name):
-        cls.FACTORY_CLASSES[name] = instance_class
-
-    def _class_name_params(self, name):
-        class_name, params = super(DbPersisterFactory, self).\
-            _class_name_params(name)
-        conf_name = params['configurer']
-        conf_cls = self.FACTORY_CLASSES[conf_name]
-        conf_inst = conf_cls()
-        del params['configurer']
-        conf_inst.configure(params)
-        return class_name, params
-
-    def _instance(self, cls, *args, **kwargs):
-        inst = super(DbPersisterFactory, self)._instance(
-            cls, *args, **kwargs)
-        inst.conn_manager.persister = inst
-        return inst
-
-
-DbPersisterFactory.register(BeanDbPersister)

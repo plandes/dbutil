@@ -1,6 +1,4 @@
-from zensols.db import (
-    Bean,
-)
+from zensols.db import Bean
 
 
 class Person(Bean):

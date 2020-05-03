@@ -1,9 +1,8 @@
 import logging
 import unittest
+from pathlib import Path
 from config import AppConfig
-from zensols.db import (
-    DynamicDataParser,
-)
+from zensols.db import DynamicDataParser
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +16,7 @@ class TestParser(unittest.TestCase):
         self.config = AppConfig.instance()
 
     def test_parse(self):
-        db_path = self.config.get_option_path('sql_file', 'parse-test')
+        db_path = Path('./test-resources/parse-test.sql')
         parser = DynamicDataParser(db_path)
         secs = parser.sections
         self.assertEqual(2, len(secs))
