@@ -26,7 +26,6 @@ class SqliteConnectionManager(ConnectionManager):
         """
         super(SqliteConnectionManager, self).__init__()
         self.db_file = db_file
-        #self.persister = persister
         self.create_db = create_db
 
     def create(self):
