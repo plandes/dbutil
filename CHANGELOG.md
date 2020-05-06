@@ -8,9 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [0.0.6] - 2020-05-05
 ### Changed
 - Remove `ConnectionManagerConfigurer` as a part of upgrading to `zensol.util`
-  per v. 1.2.2.
+  per v. 1.2.3.
 
 
 ## [0.0.5] - 2020-04-25
@@ -43,7 +44,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/dbutil/compare/v0.0.5...HEAD
+[Unreleased]: https://github.com/plandes/dbutil/compare/v0.0.6...HEAD
+[0.0.6]: https://github.com/plandes/dbutil/compare/v0.0.5...v0.0.6
 [0.0.5]: https://github.com/plandes/dbutil/compare/v0.0.4...v0.0.5
 [0.0.4]: https://github.com/plandes/dbutil/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/plandes/dbutil/compare/v0.0.2...v0.0.3
