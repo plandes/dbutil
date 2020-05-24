@@ -11,7 +11,7 @@ Features:
 * DB-API Interface allows combined SQL rapid prototyping with backing
 programmatic usage.
 * Java Beans like persistence.
-* Integration with [zensols.actioncli stash].
+* Integration with [zensols.util stash].
 * [SQLite] integration.
 * [Postgresql] integration with the [dbutilpg] library.
 
@@ -60,7 +60,7 @@ Copyright (c) 2020 Paul Landes
 [python37-badge]: https://img.shields.io/badge/python-3.7-blue.svg
 [python37-link]: https://www.python.org/downloads/release/python-370
 
-[zensols.actioncli stash]: https://github.com/plandes/actioncli/blob/master/src/python/zensols/actioncli/persist.py#L283
+[zensols.util stash]: https://github.com/plandes/util/blob/master/src/python/zensols/util/persist.py
 [SQLite]: https://www.sqlite.org/index.html
 
 [Postgreql]: https://www.postgresql.org
