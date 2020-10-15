@@ -3,11 +3,7 @@ import unittest
 from pathlib import Path
 import shutil
 from zensols.config import ImportConfigFactory
-from zensols.db import (
-    #DbPersisterFactory,
-    DbPersister,
-    BeanStash,
-)
+from zensols.db import DbPersister, BeanStash
 from config import AppConfig
 from sql import Person
 
@@ -19,15 +15,12 @@ if 0:
 
 
 class PersonPersister(DbPersister):
-    def insert_row(self, name: str, age: int):
+    def insert_row(self, name: str, age: int) -> int:
         return self.execute_no_read('insert_person', params=(name, age,))
 
     def get(self, row_factory='tuple'):
         sql = self.sql_entries['select_people']
         return self.execute(sql, row_factory=row_factory)
-
-
-#DbPersisterFactory.register(PersonPersister)
 
 
 class TestSqlLite(unittest.TestCase):
