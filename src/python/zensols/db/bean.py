@@ -4,8 +4,8 @@
 __author__ = 'Paul Landes'
 
 import logging
-from typing import Dict, Any
-from dataclasses import dataclass, field
+from typing import Dict, Any, Tuple
+from dataclasses import dataclass, field, fields
 from pathlib import Path
 from abc import abstractmethod, ABC
 from zensols.persist import resource, Stash
@@ -96,6 +96,8 @@ class ConnectionManager(ABC):
         """
         cur = conn.cursor()
         try:
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug(f'sql: {sql}, params: {params}')
             cur.execute(sql, params)
             conn.commit()
             return cur.lastrowid
@@ -179,9 +181,9 @@ class DbPersister(object):
 
     def _check_entry(self, name):
         if name is None:
-            raise ValueError(f'no defined SQL entry for persist function')
+            raise ValueError('no defined SQL entry for persist function')
         if len(name) == 0:
-            raise ValueError(f"non-optional entry not provided")
+            raise ValueError('non-optional entry not provided')
         if name not in self.sql_entries:
             raise ValueError(f"no entry '{name}' found in SQL configuration")
 
@@ -248,12 +250,11 @@ class Bean(ABC):
     """A container class like a Java *bean*.
 
     """
-    @abstractmethod
-    def get_attr_names(self) -> list:
+    def get_attr_names(self) -> Tuple[str]:
         """Return a list of string attribute names.
 
         """
-        pass
+        return tuple(map(lambda f: f.name, fields(self)))
 
     def get_attrs(self) -> dict:
         """Return a dict of attributes that are meant to be persisted.
@@ -267,7 +268,7 @@ class Bean(ABC):
         """
         return tuple(map(lambda x: getattr(self, x), self.get_attr_names()))
 
-    def get_insert_row(self) ->tuple:
+    def get_insert_row(self) -> tuple:
         """Return a row of data meant to be inserted into the database.  This method
         implementation leaves off the first attriubte assuming it contains a
         unique (i.e. row ID) of the object.  See ``get_row``.
