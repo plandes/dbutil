@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
 ## [Unreleased]
+
+
+## [0.0.7] - 2020-12-09
 ### Added
 - Sphinx documentation, which includes API docs.
 
@@ -46,7 +49,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/dbutil/compare/v0.0.6...HEAD
+[Unreleased]: https://github.com/plandes/dbutil/compare/v0.0.7...HEAD
+[0.0.7]: https://github.com/plandes/dbutil/compare/v0.0.6...v0.0.7
 [0.0.6]: https://github.com/plandes/dbutil/compare/v0.0.5...v0.0.6
 [0.0.5]: https://github.com/plandes/dbutil/compare/v0.0.4...v0.0.5
 [0.0.4]: https://github.com/plandes/dbutil/compare/v0.0.3...v0.0.4
