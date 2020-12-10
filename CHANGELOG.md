@@ -8,9 +8,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
-## [0.0.7] - 2020-12-09
+## [0.0.8] - 2020-12-09
 ### Added
 - Sphinx documentation, which includes API docs.
+
+
+## [0.0.7] - 2020-12-09
+### Changed
+- Convert bean and connection manager to data classes.
+- Fixed test cases.
 
 
 ## [0.0.6] - 2020-05-05
@@ -49,7 +55,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/dbutil/compare/v0.0.7...HEAD
+[Unreleased]: https://github.com/plandes/dbutil/compare/v0.0.8...HEAD
+[0.0.8]: https://github.com/plandes/dbutil/compare/v0.0.7...v0.0.8
 [0.0.7]: https://github.com/plandes/dbutil/compare/v0.0.6...v0.0.7
 [0.0.6]: https://github.com/plandes/dbutil/compare/v0.0.5...v0.0.6
 [0.0.5]: https://github.com/plandes/dbutil/compare/v0.0.4...v0.0.5
