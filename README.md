@@ -13,7 +13,7 @@ programmatic usage.
 * Java Beans like persistence.
 * Integration with [zensols.util stash].
 * [SQLite] integration.
-* [Postgresql] integration with the [dbutilpg] library.
+* [PostgreSQL] integration with the [dbutilpg] library.
 
 
 ## Documentation
@@ -63,5 +63,5 @@ Copyright (c) 2020 Paul Landes
 [zensols.util stash]: https://github.com/plandes/util/blob/master/src/python/zensols/util/persist.py
 [SQLite]: https://www.sqlite.org/index.html
 
-[Postgreql]: https://www.postgresql.org
+[PostgreSQL]: https://www.postgresql.org
 [dbutilpg]: https://github.com/plandes/dbutilpg
