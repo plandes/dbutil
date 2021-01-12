@@ -3,11 +3,12 @@
 """
 __author__ = 'Paul Landes'
 
-import logging
 from typing import Dict, Any, Tuple
 from dataclasses import dataclass, field, fields
-from pathlib import Path
 from abc import abstractmethod, ABC
+import logging
+from pathlib import Path
+import pandas as pd
 from zensols.persist import resource, Stash
 from zensols.db import DynamicDataParser
 
@@ -66,32 +67,38 @@ class ConnectionManager(ABC):
         return d
 
     def execute(self, conn, sql, params, row_factory, map_fn):
-        """See ``DbPersister.execute``.
+        """See :meth:`DbPersister.execute`.
 
         """
         def second(cursor, row):
             return cls(*row)
 
         rfs = {'dict': self._dict_factory,
-               'tuple': None}
+               'tuple': None,
+               'pandas': None}
         if row_factory in rfs:
-            row_factory = rfs[row_factory]
+            rfac = rfs[row_factory]
         else:
             cls = row_factory
-            row_factory = second
-        if row_factory is not None:
-            conn.row_factory = row_factory
+            rfac = second
+        if rfac is not None:
+            conn.row_factory = rfac
         cur = conn.cursor()
         try:
             res = cur.execute(sql, params)
             if map_fn is not None:
-                res = map(map_fn, res)
-            return tuple(res)
+                res = tuple(map(map_fn, res))
+            elif row_factory == 'pandas':
+                cols = tuple(map(lambda d: d[0], cur.description))
+                res = pd.DataFrame(res, columns=cols)
+            else:
+                res = tuple(res)
+            return res
         finally:
             cur.close()
 
     def execute_no_read(self, conn, sql, params) -> int:
-        """See ``DbPersister.execute_no_read``.
+        """See :meth:`DbPersister.execute_no_read`.
 
         """
         cur = conn.cursor()
@@ -106,7 +113,7 @@ class ConnectionManager(ABC):
 
     def insert_rows(self, conn, sql, rows: list, errors: str,
                     set_id_fn, map_fn) -> int:
-        """See ``InsertableBeanDbPersister.insert_rows``.
+        """See :meth:`InsertableBeanDbPersister.insert_rows`.
 
         """
         cur = conn.cursor()
@@ -137,16 +144,15 @@ class DbPersister(object):
     """CRUDs data to/from a DB-API connection.
 
     :param sql_file: the text file containing the SQL statements (see
-                     ``DynamicDataParser``)
+                     :class:`DynamicDataParser`)
+
     :param conn_manager: used to create DB-API connections
+
     """
     sql_file: Path
     conn_manager: ConnectionManager
 
     def __post_init__(self):
-        """Initialize.
-
-        """
         self.parser = DynamicDataParser(self.sql_file)
         self.conn_manager.register_persister(self)
 
@@ -160,6 +166,7 @@ class DbPersister(object):
     @property
     def metadata(self):
         """Return the metadata associated with the SQL file.
+
         """
         return self.parser.meta
 
@@ -167,7 +174,7 @@ class DbPersister(object):
         """Create a connection to the database.
 
         """
-        logger.debug(f'creating connection')
+        logger.debug('creating connection')
         return self.conn_manager.create()
 
     def _dispose_connection(self, conn):
@@ -192,24 +199,31 @@ class DbPersister(object):
         """Execute SQL on a database connection.
 
         :param conn: the connection object with the database
+
         :param sql: the string SQL to execute
+
         :param params: the parameters given to the SQL statement (populated
                        with ``?``) in the statement
+
         :param row_factory: informs how to create result sets; ``dict`` for
                             dictionaries, ``tuple`` for tuples otherwise a
                             function or class (default to tuples)
 
         """
-        return self.conn_manager.execute(conn, sql, params, row_factory, map_fn)
+        return self.conn_manager.execute(
+            conn, sql, params, row_factory, map_fn)
 
     def execute_by_name(self, name, params=(), row_factory='tuple',
                         map_fn=None):
         """Just like ``execute`` but look up the SQL.
 
         :param name: the name of the SQL entry used for the query
+
         :param sql: the string SQL to execute
+
         :param params: the parameters given to the SQL statement (populated
                        with ``?``) in the statement
+
         :param row_factory: informs how to create result sets; ``dict`` for
                             dictionaries, ``tuple`` for tuples otherwise a
                             function or class (default to tuples)
@@ -237,7 +251,9 @@ class DbPersister(object):
 
         :param entry_name: the key in the SQL file whose value is used as the
                            statement
-        :param capture_rowid: if ``True`, return the last row ID from the cursor
+
+        :param capture_rowid: if ``True``, return the last row ID from the
+                              cursor
 
         """
         self._check_entry(entry_name)
@@ -258,6 +274,7 @@ class Bean(ABC):
 
     def get_attrs(self) -> dict:
         """Return a dict of attributes that are meant to be persisted.
+
         """
         return {n: getattr(self, n) for n in self.get_attr_names()}
 
