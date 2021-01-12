@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- Pandas data frame read access in `DbPersister`.
+
 
 ## [0.0.8] - 2020-12-09
 ### Added
