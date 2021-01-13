@@ -60,11 +60,31 @@ class ConnectionManager(ABC):
         pass
 
     @staticmethod
-    def _dict_factory(cursor, row):
+    def _dict_factory(cursor: Any, row: Tuple[Any]):
+        """Create a default dictionary factory used by the cursor.
+
+        :param cursor: the database cursor object, which has a ``description``
+                       attribute
+
+        :param row: the row given by the database to be mapped to a ``dict``
+
+        """
         d = {}
         for idx, col in enumerate(cursor.description):
             d[col[0]] = row[idx]
         return d
+
+    def _to_dataframe(self, res: Iterable[Any], cursor: Any) -> pd.DataFrame:
+        """Return a Pandas dataframe from the results given by the database.
+
+        :param res: the database results row by row
+
+        :param cursor: the database cursor object, which has a ``description``
+                       attribute
+
+        """
+        cols = tuple(map(lambda d: d[0], cursor.description))
+        return pd.DataFrame(res, columns=cols)
 
     def execute(self, conn: Any, sql: str, params: Tuple[Any],
                 row_factory: Union[str, Callable],
@@ -103,13 +123,14 @@ class ConnectionManager(ABC):
             conn.row_factory = rfac
         cur = conn.cursor()
         try:
+            tupify = True
             res = cur.execute(sql, params)
             if map_fn is not None:
-                res = tuple(map(map_fn, res))
-            elif row_factory == 'pandas':
-                cols = tuple(map(lambda d: d[0], cur.description))
-                res = pd.DataFrame(res, columns=cols)
-            else:
+                res = map(map_fn, res)
+            if row_factory == 'pandas':
+                res = self._to_dataframe(res, cur)
+                tupify = False
+            if tupify:
                 res = tuple(res)
             return res
         finally:
