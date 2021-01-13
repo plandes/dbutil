@@ -1,2 +1,2 @@
-{"includes": {"named": ["zensols.util"],
+{"includes": {"named": ["zensols.util", "pandas"],
 	      "mapped": []}}

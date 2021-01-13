@@ -3,7 +3,7 @@
 """
 __author__ = 'Paul Landes'
 
-from typing import Dict, Any, Tuple
+from typing import Dict, Any, Tuple, Union, Callable
 from dataclasses import dataclass, field, fields
 from abc import abstractmethod, ABC
 import logging
@@ -36,7 +36,7 @@ class ConnectionManager(ABC):
         self.persister = persister
 
     @abstractmethod
-    def create(self):
+    def create(self) -> Any:
         """Create a connection to the database.
 
         """
@@ -66,8 +66,26 @@ class ConnectionManager(ABC):
             d[col[0]] = row[idx]
         return d
 
-    def execute(self, conn, sql, params, row_factory, map_fn):
-        """See :meth:`DbPersister.execute`.
+    def execute(self, conn: Any, sql: str, params: Tuple[Any],
+                row_factory: Union[str, Callable],
+                map_fn: Callable) -> Tuple[Union[dict, tuple, pd.DataFrame]]:
+        """Execute SQL on a database connection.
+
+        :param conn: the connection object with the database
+
+        :param sql: the string SQL to execute
+
+        :param params: the parameters given to the SQL statement (populated
+                       with ``?``) in the statement
+
+        :param row_factory: informs how to create result sets, which is one of:
+
+            * ``tuple``: tuples (the default)
+            * ``dict``: for dictionaries
+            * ``pandas``: for a :class:`pandas.DataFrame`
+            * otherwise: a function or class
+
+        :see: :meth:`.DbPersister.execute`.
 
         """
         def second(cursor, row):
@@ -98,7 +116,7 @@ class ConnectionManager(ABC):
             cur.close()
 
     def execute_no_read(self, conn, sql, params) -> int:
-        """See :meth:`DbPersister.execute_no_read`.
+        """See :meth:`.DbPersister.execute_no_read`.
 
         """
         cur = conn.cursor()
@@ -113,7 +131,7 @@ class ConnectionManager(ABC):
 
     def insert_rows(self, conn, sql, rows: list, errors: str,
                     set_id_fn, map_fn) -> int:
-        """See :meth:`InsertableBeanDbPersister.insert_rows`.
+        """See :meth:`.InsertableBeanDbPersister.insert_rows`.
 
         """
         cur = conn.cursor()
@@ -195,19 +213,22 @@ class DbPersister(object):
             raise ValueError(f"no entry '{name}' found in SQL configuration")
 
     @connection()
-    def execute(self, conn, sql, params=(), row_factory='tuple', map_fn=None):
+    def execute(self, conn: Any, sql: str, params: Tuple[Any],
+                row_factory: Union[str, Callable],
+                map_fn: Callable) -> Tuple[Union[dict, tuple, pd.DataFrame]]:
         """Execute SQL on a database connection.
-
-        :param conn: the connection object with the database
 
         :param sql: the string SQL to execute
 
         :param params: the parameters given to the SQL statement (populated
                        with ``?``) in the statement
 
-        :param row_factory: informs how to create result sets; ``dict`` for
-                            dictionaries, ``tuple`` for tuples otherwise a
-                            function or class (default to tuples)
+        :param row_factory: informs how to create result sets, which is one of:
+
+            * ``tuple``: tuples (the default)
+            * ``dict``: for dictionaries
+            * ``pandas``: for a :class:`pandas.DataFrame`
+            * otherwise: a function or class
 
         """
         return self.conn_manager.execute(
@@ -215,26 +236,20 @@ class DbPersister(object):
 
     def execute_by_name(self, name, params=(), row_factory='tuple',
                         map_fn=None):
-        """Just like ``execute`` but look up the SQL.
+        """Just like :meth:`execute` but look up the SQL.
 
         :param name: the name of the SQL entry used for the query
 
-        :param sql: the string SQL to execute
+        :see: :meth:`execute`
 
-        :param params: the parameters given to the SQL statement (populated
-                       with ``?``) in the statement
-
-        :param row_factory: informs how to create result sets; ``dict`` for
-                            dictionaries, ``tuple`` for tuples otherwise a
-                            function or class (default to tuples)
         """
         self._check_entry(name)
         sql = self.sql_entries[name]
         return self.execute(sql, params, row_factory, map_fn)
 
     def execute_singleton_by_name(self, *args, **kwargs):
-        """Just like ``execute_by_name`` except return only the first item or ``None``
-        if no results.
+        """Just like :meth:`execute_by_name` except return only the first item or
+        ``None`` if no results.
 
         """
         res = self.execute_by_name(*args, **kwargs)
@@ -321,21 +336,29 @@ class Bean(ABC):
 @dataclass
 class ReadOnlyBeanDbPersister(DbPersister):
     """A read-only persister that CRUDs data based on predefined SQL given in the
-    configuration.  The class optionally works with instances of ``Bean`` when
-    ``row_factory`` is set to the target bean class.
+    configuration.  The class optionally works with instances of :class:`.Bean`
+    when :obj:`row_factory` is set to the target bean class.
 
     :param select_name: the name of the SQL entry used to select data/class
-    :param row_factory: the row_factory parameter in ``get_all``
-                        when none is givne (see class docs)
+
+    :param select_by_id: the name of the SQL entry used to select a single row
+                         by unique ID
+
+    :param select_exists: the name of the SQL entry used to determine if a
+                          row exists by unique ID
+
+    :param row_factory: the row_factory parameter for all ``get_*`` methods
+                        when none is given (see class docs)
+
     """
 
     select_name: str = field(default=None)
-    select_by_id: str = field(default=None,)
+    select_by_id: str = field(default=None)
     select_exists: str = field(default=None)
     row_factory: str = field(default='tuple')
 
     def get(self) -> list:
-        """Return using the SQL provided by the entry ``select_name``.
+        """Return using the SQL provided by the entry identified by :obj:`select_name`.
 
         """
         return self.execute_by_name(
@@ -493,7 +516,7 @@ class BeanDbPersister(UpdatableBeanDbPersister):
 
 @dataclass
 class BeanStash(Stash):
-    """A stash that uses a backing DB-API backed ``BeanDbPersister``.
+    """A stash that uses a backing DB-API backed :class:`BeanDbPersister`.
 
     """
     def __init__(self, persister: BeanDbPersister):

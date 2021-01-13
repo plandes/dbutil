@@ -18,13 +18,14 @@ class SqliteConnectionManager(ConnectionManager):
     """An SQLite connection factory.
 
     :param db_file: the SQLite database file to read or create
+
     :param persister: the persister that will use this connection factory
                       (needed to get the initialization DDL SQL)
     """
     db_file: Path
     create_db: bool = field(default=True)
 
-    def create(self):
+    def create(self) -> sqlite3.Connection:
         db_file = self.db_file
         logger.debug(f'creating connection to {db_file}')
         created = False
