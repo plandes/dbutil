@@ -14,6 +14,7 @@ programmatic usage.
 * Integration with [zensols.util stash].
 * [SQLite] integration.
 * [PostgreSQL] integration with the [dbutilpg] library.
+* [Pandas] data frame creation, which is agnostic of database provider.
 
 
 ## Documentation
@@ -65,3 +66,4 @@ Copyright (c) 2020 - 2021 Paul Landes
 
 [PostgreSQL]: https://www.postgresql.org
 [dbutilpg]: https://github.com/plandes/dbutilpg
+[Pandas]: https://pandas.pydata.org
