@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - [Pandas data] frame read access in `DbPersister`.
 - API Documentation.
+### Changed
+- Switch to GitHub workflows.
 
 
 ## [0.0.8] - 2020-12-09
