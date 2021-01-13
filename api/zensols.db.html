@@ -1,0 +1,1016 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>zensols.db package &mdash; Database convenience utilities. 0.0.9 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Contributing" href="../CONTRIBUTING.html" />
+    <link rel="prev" title="API Reference" href="../api.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../top.html" class="icon icon-home" alt="Documentation Home"> Database convenience utilities.
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.9
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Overview</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">zensols.db package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-zensols.db.bean">zensols.db.bean module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-zensols.db.parse">zensols.db.parse module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-zensols.db.sqlite">zensols.db.sqlite module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-zensols.db">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../CONTRIBUTING.html">Contributing</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../top.html">Database convenience utilities.</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../top.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../api.html">API Reference</a> &raquo;</li>
+        
+      <li>zensols.db package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/api/zensols.db.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="zensols-db-package">
+<h1>zensols.db package<a class="headerlink" href="#zensols-db-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-zensols.db.bean">
+<span id="zensols-db-bean-module"></span><h2>zensols.db.bean module<a class="headerlink" href="#module-zensols.db.bean" title="Permalink to this headline">¶</a></h2>
+<p>Basic CRUD utility classes</p>
+<dl class="py class">
+<dt id="zensols.db.bean.Bean">
+<em class="property">class </em><code class="sig-prename descclassname">zensols.db.bean.</code><code class="sig-name descname">Bean</code><a class="reference internal" href="../_modules/zensols/db/bean.html#Bean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.Bean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
+<p>A container class like a Java <em>bean</em>.</p>
+<dl class="py method">
+<dt id="zensols.db.bean.Bean.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#zensols.db.bean.Bean.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.bean.Bean.get_attr_names">
+<code class="sig-name descname">get_attr_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/bean.html#Bean.get_attr_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.Bean.get_attr_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of string attribute names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.bean.Bean.get_attrs">
+<code class="sig-name descname">get_attrs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/bean.html#Bean.get_attrs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.Bean.get_attrs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a dict of attributes that are meant to be persisted.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.bean.Bean.get_insert_row">
+<code class="sig-name descname">get_insert_row</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/bean.html#Bean.get_insert_row"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.Bean.get_insert_row" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a row of data meant to be inserted into the database.  This method
+implementation leaves off the first attriubte assuming it contains a
+unique (i.e. row ID) of the object.  See <a class="reference internal" href="#zensols.db.bean.Bean.get_row" title="zensols.db.bean.Bean.get_row"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_row()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.bean.Bean.get_row">
+<code class="sig-name descname">get_row</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/bean.html#Bean.get_row"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.Bean.get_row" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a row of data meant to be printed.  This includes the unique ID of
+the bean (see <a class="reference internal" href="#zensols.db.bean.Bean.get_insert_row" title="zensols.db.bean.Bean.get_insert_row"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_insert_row()</span></code></a>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="zensols.db.bean.BeanDbPersister">
+<em class="property">class </em><code class="sig-prename descclassname">zensols.db.bean.</code><code class="sig-name descname">BeanDbPersister</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sql_file</span></em>, <em class="sig-param"><span class="n">conn_manager</span></em>, <em class="sig-param"><span class="n">select_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">select_by_id</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">select_exists</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">row_factory</span><span class="o">=</span><span class="default_value">'tuple'</span></em>, <em class="sig-param"><span class="n">insert_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">update_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">delete_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">keys_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">count_name</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/bean.html#BeanDbPersister"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.BeanDbPersister" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#zensols.db.bean.UpdatableBeanDbPersister" title="zensols.db.bean.UpdatableBeanDbPersister"><code class="xref py py-class docutils literal notranslate"><span class="pre">zensols.db.bean.UpdatableBeanDbPersister</span></code></a></p>
+<p>A class that contains the remaining CRUD funtionality the super class
+doesn’t have.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>keys_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – the name of the SQL entry used to fetch all keys</p></li>
+<li><p><strong>count_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – the name of the SQL entry used to get a row count</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="zensols.db.bean.BeanDbPersister.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sql_file</span></em>, <em class="sig-param"><span class="n">conn_manager</span></em>, <em class="sig-param"><span class="n">select_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">select_by_id</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">select_exists</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">row_factory</span><span class="o">=</span><span class="default_value">'tuple'</span></em>, <em class="sig-param"><span class="n">insert_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">update_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">delete_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">keys_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">count_name</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#zensols.db.bean.BeanDbPersister.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.db.bean.BeanDbPersister.count_name">
+<code class="sig-name descname">count_name</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></em><em class="property"> = None</em><a class="headerlink" href="#zensols.db.bean.BeanDbPersister.count_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.bean.BeanDbPersister.get_count">
+<code class="sig-name descname">get_count</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/bean.html#BeanDbPersister.get_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.BeanDbPersister.get_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the number of rows in the bean table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.bean.BeanDbPersister.get_keys">
+<code class="sig-name descname">get_keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/bean.html#BeanDbPersister.get_keys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.BeanDbPersister.get_keys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete a row by ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.db.bean.BeanDbPersister.keys_name">
+<code class="sig-name descname">keys_name</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></em><em class="property"> = None</em><a class="headerlink" href="#zensols.db.bean.BeanDbPersister.keys_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="zensols.db.bean.BeanStash">
+<em class="property">class </em><code class="sig-prename descclassname">zensols.db.bean.</code><code class="sig-name descname">BeanStash</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">persister</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/bean.html#BeanStash"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.BeanStash" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://plandes.github.io/util/api/zensols.persist.html#zensols.persist.domain.Stash" title="(in Zensols Utilities v1.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">zensols.persist.domain.Stash</span></code></a></p>
+<p>A stash that uses a backing DB-API backed <a class="reference internal" href="#zensols.db.bean.BeanDbPersister" title="zensols.db.bean.BeanDbPersister"><code class="xref py py-class docutils literal notranslate"><span class="pre">BeanDbPersister</span></code></a>.</p>
+<dl class="py method">
+<dt id="zensols.db.bean.BeanStash.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">persister</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/bean.html#BeanStash.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.BeanStash.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.bean.BeanStash.delete">
+<code class="sig-name descname">delete</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/bean.html#BeanStash.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.BeanStash.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete the resource for data pointed to by <code class="docutils literal notranslate"><span class="pre">name</span></code> or the entire resource
+if <code class="docutils literal notranslate"><span class="pre">name</span></code> is not given.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.bean.BeanStash.dump">
+<code class="sig-name descname">dump</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">inst</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/bean.html#BeanStash.dump"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.BeanStash.dump" title="Permalink to this definition">¶</a></dt>
+<dd><p>Since this implementation can let the database auto-increment the
+unique/primary key, beware of “changing” keys.  If the key changes
+after inserted it will raise a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>.  For this reason, it’s
+best to pass <code class="docutils literal notranslate"><span class="pre">None</span></code> as <code class="docutils literal notranslate"><span class="pre">name</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.bean.BeanStash.exists">
+<code class="sig-name descname">exists</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/bean.html#BeanStash.exists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.BeanStash.exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">True</span></code> if data with key <code class="docutils literal notranslate"><span class="pre">name</span></code> exists.</p>
+<dl class="simple">
+<dt><em>Implementation note</em>: This (in <code class="docutils literal notranslate"><span class="pre">Stash</span></code>) method is very inefficient</dt><dd><p>and should be overriden.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.bean.BeanStash.keys">
+<code class="sig-name descname">keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/bean.html#BeanStash.keys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.BeanStash.keys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an iterable of keys in the collection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.bean.BeanStash.load">
+<code class="sig-name descname">load</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/bean.html#BeanStash.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.BeanStash.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a data value from the pickled data with key <code class="docutils literal notranslate"><span class="pre">name</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="zensols.db.bean.ConnectionManager">
+<em class="property">class </em><code class="sig-prename descclassname">zensols.db.bean.</code><code class="sig-name descname">ConnectionManager</code><a class="reference internal" href="../_modules/zensols/db/bean.html#ConnectionManager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.ConnectionManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
+<p>Instance DB-API connection lifecycle.</p>
+<dl class="py method">
+<dt id="zensols.db.bean.ConnectionManager.create">
+<em class="property">abstract </em><code class="sig-name descname">create</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/bean.html#ConnectionManager.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.ConnectionManager.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a connection to the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.bean.ConnectionManager.dispose">
+<code class="sig-name descname">dispose</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conn</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/bean.html#ConnectionManager.dispose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.ConnectionManager.dispose" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close the connection to the database.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.bean.ConnectionManager.drop">
+<em class="property">abstract </em><code class="sig-name descname">drop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/bean.html#ConnectionManager.drop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.ConnectionManager.drop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove all objects from the database or the database itself.</p>
+<p>For SQLite, this deletes the file.  In database implementations, this
+might drop all objects from the database.  Regardless, it is expected
+that <code class="docutils literal notranslate"><span class="pre">create</span></code> is able to recreate the database after this action.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.bean.ConnectionManager.execute">
+<code class="sig-name descname">execute</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conn</span></em>, <em class="sig-param"><span class="n">sql</span></em>, <em class="sig-param"><span class="n">params</span></em>, <em class="sig-param"><span class="n">row_factory</span></em>, <em class="sig-param"><span class="n">map_fn</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/bean.html#ConnectionManager.execute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.ConnectionManager.execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute SQL on a database connection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>conn</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>) – the connection object with the database</p></li>
+<li><p><strong>sql</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the string SQL to execute</p></li>
+<li><p><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]) – the parameters given to the SQL statement (populated
+with <code class="docutils literal notranslate"><span class="pre">?</span></code>) in the statement</p></li>
+<li><p><strong>row_factory</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></a>]) – <p>informs how to create result sets, which is one of:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">tuple</span></code>: tuples (the default)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dict</span></code>: for dictionaries</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pandas</span></code>: for a <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></p></li>
+<li><p>otherwise: a function or class</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">See</dt>
+<dd class="field-even"><p><a class="reference internal" href="#zensols.db.bean.DbPersister.execute" title="zensols.db.bean.DbPersister.execute"><code class="xref py py-meth docutils literal notranslate"><span class="pre">DbPersister.execute()</span></code></a>.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code>]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.bean.ConnectionManager.execute_no_read">
+<code class="sig-name descname">execute_no_read</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conn</span></em>, <em class="sig-param"><span class="n">sql</span></em>, <em class="sig-param"><span class="n">params</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/bean.html#ConnectionManager.execute_no_read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.ConnectionManager.execute_no_read" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="#zensols.db.bean.DbPersister.execute_no_read" title="zensols.db.bean.DbPersister.execute_no_read"><code class="xref py py-meth docutils literal notranslate"><span class="pre">DbPersister.execute_no_read()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.bean.ConnectionManager.insert_rows">
+<code class="sig-name descname">insert_rows</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">conn</span></em>, <em class="sig-param"><span class="n">sql</span></em>, <em class="sig-param"><span class="n">rows</span></em>, <em class="sig-param"><span class="n">errors</span></em>, <em class="sig-param"><span class="n">set_id_fn</span></em>, <em class="sig-param"><span class="n">map_fn</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/bean.html#ConnectionManager.insert_rows"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.ConnectionManager.insert_rows" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="#zensols.db.bean.InsertableBeanDbPersister.insert_rows" title="zensols.db.bean.InsertableBeanDbPersister.insert_rows"><code class="xref py py-meth docutils literal notranslate"><span class="pre">InsertableBeanDbPersister.insert_rows()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.bean.ConnectionManager.register_persister">
+<code class="sig-name descname">register_persister</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">persister</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/bean.html#ConnectionManager.register_persister"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.ConnectionManager.register_persister" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register the persister used for this connection manager.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>persister</strong> (<a class="reference internal" href="#zensols.db.bean.DbPersister" title="zensols.db.bean.DbPersister"><em>DbPersister</em></a>) – the persister used for connection management</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="zensols.db.bean.DbPersister">
+<em class="property">class </em><code class="sig-prename descclassname">zensols.db.bean.</code><code class="sig-name descname">DbPersister</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sql_file</span></em>, <em class="sig-param"><span class="n">conn_manager</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/bean.html#DbPersister"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.DbPersister" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>CRUDs data to/from a DB-API connection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sql_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a>) – the text file containing the SQL statements (see
+<code class="xref py py-class docutils literal notranslate"><span class="pre">DynamicDataParser</span></code>)</p></li>
+<li><p><strong>conn_manager</strong> (<a class="reference internal" href="#zensols.db.bean.ConnectionManager" title="zensols.db.bean.ConnectionManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConnectionManager</span></code></a>) – used to create DB-API connections</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="zensols.db.bean.DbPersister.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sql_file</span></em>, <em class="sig-param"><span class="n">conn_manager</span></em><span class="sig-paren">)</span><a class="headerlink" href="#zensols.db.bean.DbPersister.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.db.bean.DbPersister.conn_manager">
+<code class="sig-name descname">conn_manager</code><em class="property">: <a class="reference internal" href="#zensols.db.bean.ConnectionManager" title="zensols.db.bean.ConnectionManager">zensols.db.bean.ConnectionManager</a></em><a class="headerlink" href="#zensols.db.bean.DbPersister.conn_manager" title="Permalink to this definition">¶</a></dt>
+<dd><p>used to create DB-API connections</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.bean.DbPersister.execute">
+<code class="sig-name descname">execute</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#zensols.db.bean.DbPersister.execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute SQL on a database connection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sql</strong> – the string SQL to execute</p></li>
+<li><p><strong>params</strong> – the parameters given to the SQL statement (populated
+with <code class="docutils literal notranslate"><span class="pre">?</span></code>) in the statement</p></li>
+<li><p><strong>row_factory</strong> – <p>informs how to create result sets, which is one of:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">tuple</span></code>: tuples (the default)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dict</span></code>: for dictionaries</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pandas</span></code>: for a <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></p></li>
+<li><p>otherwise: a function or class</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.bean.DbPersister.execute_by_name">
+<code class="sig-name descname">execute_by_name</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">params</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="n">row_factory</span><span class="o">=</span><span class="default_value">'tuple'</span></em>, <em class="sig-param"><span class="n">map_fn</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/bean.html#DbPersister.execute_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.DbPersister.execute_by_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Just like <a class="reference internal" href="#zensols.db.bean.DbPersister.execute" title="zensols.db.bean.DbPersister.execute"><code class="xref py py-meth docutils literal notranslate"><span class="pre">execute()</span></code></a> but look up the SQL.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the name of the SQL entry used for the query</p>
+</dd>
+<dt class="field-even">See</dt>
+<dd class="field-even"><p><a class="reference internal" href="#zensols.db.bean.DbPersister.execute" title="zensols.db.bean.DbPersister.execute"><code class="xref py py-meth docutils literal notranslate"><span class="pre">execute()</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.bean.DbPersister.execute_no_read">
+<code class="sig-name descname">execute_no_read</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#zensols.db.bean.DbPersister.execute_no_read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute SQL without reading data back.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>entry_name</strong> – the key in the SQL file whose value is used as the
+statement</p></li>
+<li><p><strong>capture_rowid</strong> – if <code class="docutils literal notranslate"><span class="pre">True</span></code>, return the last row ID from the
+cursor</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.bean.DbPersister.execute_singleton_by_name">
+<code class="sig-name descname">execute_singleton_by_name</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/bean.html#DbPersister.execute_singleton_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.DbPersister.execute_singleton_by_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Just like <a class="reference internal" href="#zensols.db.bean.DbPersister.execute_by_name" title="zensols.db.bean.DbPersister.execute_by_name"><code class="xref py py-meth docutils literal notranslate"><span class="pre">execute_by_name()</span></code></a> except return only the first item or
+<code class="docutils literal notranslate"><span class="pre">None</span></code> if no results.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.bean.DbPersister.execute_sql_no_read">
+<code class="sig-name descname">execute_sql_no_read</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#zensols.db.bean.DbPersister.execute_sql_no_read" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.bean.DbPersister.metadata">
+<em class="property">property </em><code class="sig-name descname">metadata</code><a class="headerlink" href="#zensols.db.bean.DbPersister.metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the metadata associated with the SQL file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.bean.DbPersister.sql_entries">
+<em class="property">property </em><code class="sig-name descname">sql_entries</code><a class="headerlink" href="#zensols.db.bean.DbPersister.sql_entries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a dictionary of names -&gt; SQL statements from the SQL file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.db.bean.DbPersister.sql_file">
+<code class="sig-name descname">sql_file</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.9)">pathlib.Path</a></em><a class="headerlink" href="#zensols.db.bean.DbPersister.sql_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>the text file containing the SQL statements (see <code class="xref py py-class docutils literal notranslate"><span class="pre">DynamicDataParser</span></code>)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="zensols.db.bean.InsertableBeanDbPersister">
+<em class="property">class </em><code class="sig-prename descclassname">zensols.db.bean.</code><code class="sig-name descname">InsertableBeanDbPersister</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sql_file</span></em>, <em class="sig-param"><span class="n">conn_manager</span></em>, <em class="sig-param"><span class="n">select_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">select_by_id</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">select_exists</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">row_factory</span><span class="o">=</span><span class="default_value">'tuple'</span></em>, <em class="sig-param"><span class="n">insert_name</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/bean.html#InsertableBeanDbPersister"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.InsertableBeanDbPersister" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#zensols.db.bean.ReadOnlyBeanDbPersister" title="zensols.db.bean.ReadOnlyBeanDbPersister"><code class="xref py py-class docutils literal notranslate"><span class="pre">zensols.db.bean.ReadOnlyBeanDbPersister</span></code></a></p>
+<p>A class that contains insert funtionality.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>insert_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – the name of the SQL entry used to insert data/class
+instance</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="zensols.db.bean.InsertableBeanDbPersister.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sql_file</span></em>, <em class="sig-param"><span class="n">conn_manager</span></em>, <em class="sig-param"><span class="n">select_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">select_by_id</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">select_exists</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">row_factory</span><span class="o">=</span><span class="default_value">'tuple'</span></em>, <em class="sig-param"><span class="n">insert_name</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#zensols.db.bean.InsertableBeanDbPersister.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.bean.InsertableBeanDbPersister.insert">
+<code class="sig-name descname">insert</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bean</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/bean.html#InsertableBeanDbPersister.insert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.InsertableBeanDbPersister.insert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert a bean using the order of the values given in <code class="xref py py-meth docutils literal notranslate"><span class="pre">get_insert_row()</span></code>
+as that of the SQL defined with entry <a class="reference internal" href="#zensols.db.bean.InsertableBeanDbPersister.insert_name" title="zensols.db.bean.InsertableBeanDbPersister.insert_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_name</span></code></a> given in the
+initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.bean.InsertableBeanDbPersister.insert_beans">
+<code class="sig-name descname">insert_beans</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">beans</span></em>, <em class="sig-param"><span class="n">errors</span><span class="o">=</span><span class="default_value">'raise'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/bean.html#InsertableBeanDbPersister.insert_beans"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.InsertableBeanDbPersister.insert_beans" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert a bean using the order of the values given in <code class="xref py py-meth docutils literal notranslate"><span class="pre">get_insert_row()</span></code>
+as that of the SQL defined with entry <a class="reference internal" href="#zensols.db.bean.InsertableBeanDbPersister.insert_name" title="zensols.db.bean.InsertableBeanDbPersister.insert_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_name</span></code></a> given in the
+initializer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.db.bean.InsertableBeanDbPersister.insert_name">
+<code class="sig-name descname">insert_name</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></em><em class="property"> = None</em><a class="headerlink" href="#zensols.db.bean.InsertableBeanDbPersister.insert_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.bean.InsertableBeanDbPersister.insert_row">
+<code class="sig-name descname">insert_row</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">row</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/bean.html#InsertableBeanDbPersister.insert_row"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.InsertableBeanDbPersister.insert_row" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert a row in the database and return the current row ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>row</strong> – a sequence of data in column order of the SQL provided by
+the entry <a class="reference internal" href="#zensols.db.bean.InsertableBeanDbPersister.insert_name" title="zensols.db.bean.InsertableBeanDbPersister.insert_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_name</span></code></a></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.bean.InsertableBeanDbPersister.insert_rows">
+<code class="sig-name descname">insert_rows</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#zensols.db.bean.InsertableBeanDbPersister.insert_rows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert a tuple of rows in the database and return the current row ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>row</strong> – a sequence of tuples of data (or an object to be
+transformed, see <code class="docutils literal notranslate"><span class="pre">map_fn</span></code> in column order of the SQL
+provided by the entry <a class="reference internal" href="#zensols.db.bean.InsertableBeanDbPersister.insert_name" title="zensols.db.bean.InsertableBeanDbPersister.insert_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_name</span></code></a></p></li>
+<li><p><strong>errors</strong> – if this is the string <code class="docutils literal notranslate"><span class="pre">raise</span></code> then raise an error on
+any exception when invoking the database execute</p></li>
+<li><p><strong>map_fn</strong> – if not <code class="docutils literal notranslate"><span class="pre">None</span></code>, used to transform the given row in to a
+tuple that is used for the insertion</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="zensols.db.bean.ReadOnlyBeanDbPersister">
+<em class="property">class </em><code class="sig-prename descclassname">zensols.db.bean.</code><code class="sig-name descname">ReadOnlyBeanDbPersister</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sql_file</span></em>, <em class="sig-param"><span class="n">conn_manager</span></em>, <em class="sig-param"><span class="n">select_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">select_by_id</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">select_exists</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">row_factory</span><span class="o">=</span><span class="default_value">'tuple'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/bean.html#ReadOnlyBeanDbPersister"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.ReadOnlyBeanDbPersister" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#zensols.db.bean.DbPersister" title="zensols.db.bean.DbPersister"><code class="xref py py-class docutils literal notranslate"><span class="pre">zensols.db.bean.DbPersister</span></code></a></p>
+<p>A read-only persister that CRUDs data based on predefined SQL given in the
+configuration.  The class optionally works with instances of <a class="reference internal" href="#zensols.db.bean.Bean" title="zensols.db.bean.Bean"><code class="xref py py-class docutils literal notranslate"><span class="pre">Bean</span></code></a>
+when <a class="reference internal" href="#zensols.db.bean.ReadOnlyBeanDbPersister.row_factory" title="zensols.db.bean.ReadOnlyBeanDbPersister.row_factory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">row_factory</span></code></a> is set to the target bean class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>select_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – the name of the SQL entry used to select data/class</p></li>
+<li><p><strong>select_by_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – the name of the SQL entry used to select a single row
+by unique ID</p></li>
+<li><p><strong>select_exists</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – the name of the SQL entry used to determine if a
+row exists by unique ID</p></li>
+<li><p><strong>row_factory</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the row_factory parameter for <code class="docutils literal notranslate"><span class="pre">get_*</span></code> methods
+when none is given (see class docs)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="zensols.db.bean.ReadOnlyBeanDbPersister.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sql_file</span></em>, <em class="sig-param"><span class="n">conn_manager</span></em>, <em class="sig-param"><span class="n">select_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">select_by_id</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">select_exists</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">row_factory</span><span class="o">=</span><span class="default_value">'tuple'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#zensols.db.bean.ReadOnlyBeanDbPersister.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.bean.ReadOnlyBeanDbPersister.exists">
+<code class="sig-name descname">exists</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/bean.html#ReadOnlyBeanDbPersister.exists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.ReadOnlyBeanDbPersister.exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">True</span></code> if there is a object with unique ID (or row ID) in the
+database.  Otherwise return <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.bean.ReadOnlyBeanDbPersister.get">
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/bean.html#ReadOnlyBeanDbPersister.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.ReadOnlyBeanDbPersister.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return using the SQL provided by the entry identified by <a class="reference internal" href="#zensols.db.bean.ReadOnlyBeanDbPersister.select_name" title="zensols.db.bean.ReadOnlyBeanDbPersister.select_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_name</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.bean.ReadOnlyBeanDbPersister.get_by_id">
+<code class="sig-name descname">get_by_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/bean.html#ReadOnlyBeanDbPersister.get_by_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.ReadOnlyBeanDbPersister.get_by_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an object using it’s unique ID, which is could be the row ID in
+SQLite.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.db.bean.ReadOnlyBeanDbPersister.row_factory">
+<code class="sig-name descname">row_factory</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></em><em class="property"> = 'tuple'</em><a class="headerlink" href="#zensols.db.bean.ReadOnlyBeanDbPersister.row_factory" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.db.bean.ReadOnlyBeanDbPersister.select_by_id">
+<code class="sig-name descname">select_by_id</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></em><em class="property"> = None</em><a class="headerlink" href="#zensols.db.bean.ReadOnlyBeanDbPersister.select_by_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.db.bean.ReadOnlyBeanDbPersister.select_exists">
+<code class="sig-name descname">select_exists</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></em><em class="property"> = None</em><a class="headerlink" href="#zensols.db.bean.ReadOnlyBeanDbPersister.select_exists" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.db.bean.ReadOnlyBeanDbPersister.select_name">
+<code class="sig-name descname">select_name</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></em><em class="property"> = None</em><a class="headerlink" href="#zensols.db.bean.ReadOnlyBeanDbPersister.select_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="zensols.db.bean.UpdatableBeanDbPersister">
+<em class="property">class </em><code class="sig-prename descclassname">zensols.db.bean.</code><code class="sig-name descname">UpdatableBeanDbPersister</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sql_file</span></em>, <em class="sig-param"><span class="n">conn_manager</span></em>, <em class="sig-param"><span class="n">select_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">select_by_id</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">select_exists</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">row_factory</span><span class="o">=</span><span class="default_value">'tuple'</span></em>, <em class="sig-param"><span class="n">insert_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">update_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">delete_name</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/bean.html#UpdatableBeanDbPersister"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.UpdatableBeanDbPersister" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#zensols.db.bean.InsertableBeanDbPersister" title="zensols.db.bean.InsertableBeanDbPersister"><code class="xref py py-class docutils literal notranslate"><span class="pre">zensols.db.bean.InsertableBeanDbPersister</span></code></a></p>
+<p>A class that contains the remaining CRUD funtionality the super class
+doesn’t have.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>update_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – the name of the SQL entry used to update data/class
+instance(s)</p></li>
+<li><p><strong>delete_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – the name of the SQL entry used to delete data/class
+instance(s)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="zensols.db.bean.UpdatableBeanDbPersister.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sql_file</span></em>, <em class="sig-param"><span class="n">conn_manager</span></em>, <em class="sig-param"><span class="n">select_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">select_by_id</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">select_exists</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">row_factory</span><span class="o">=</span><span class="default_value">'tuple'</span></em>, <em class="sig-param"><span class="n">insert_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">update_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">delete_name</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#zensols.db.bean.UpdatableBeanDbPersister.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.bean.UpdatableBeanDbPersister.delete">
+<code class="sig-name descname">delete</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/bean.html#UpdatableBeanDbPersister.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.UpdatableBeanDbPersister.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete a row by ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.db.bean.UpdatableBeanDbPersister.delete_name">
+<code class="sig-name descname">delete_name</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></em><em class="property"> = None</em><a class="headerlink" href="#zensols.db.bean.UpdatableBeanDbPersister.delete_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.bean.UpdatableBeanDbPersister.update">
+<code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bean</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/bean.html#UpdatableBeanDbPersister.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.UpdatableBeanDbPersister.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update a a bean that using the <code class="docutils literal notranslate"><span class="pre">id</span></code> attribute and its attributes as
+values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.db.bean.UpdatableBeanDbPersister.update_name">
+<code class="sig-name descname">update_name</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></em><em class="property"> = None</em><a class="headerlink" href="#zensols.db.bean.UpdatableBeanDbPersister.update_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.bean.UpdatableBeanDbPersister.update_row">
+<code class="sig-name descname">update_row</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">row</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/bean.html#UpdatableBeanDbPersister.update_row"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.UpdatableBeanDbPersister.update_row" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update a row using the values of the row with the current unique ID as the
+first element in <code class="docutils literal notranslate"><span class="pre">*rows</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="zensols.db.bean.connection">
+<em class="property">class </em><code class="sig-prename descclassname">zensols.db.bean.</code><code class="sig-name descname">connection</code><a class="reference internal" href="../_modules/zensols/db/bean.html#connection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.connection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://plandes.github.io/util/api/zensols.persist.html#zensols.persist.annotation.resource" title="(in Zensols Utilities v1.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">zensols.persist.annotation.resource</span></code></a></p>
+<p>Annotation used to create and dispose of DB-API connections.</p>
+<dl class="py method">
+<dt id="zensols.db.bean.connection.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/bean.html#connection.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.bean.connection.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the instance based annotation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>create_method_name</strong> – the name of the method that allocates</p></li>
+<li><p><strong>destroy_method_name</strong> – the name of the method that deallocates</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-zensols.db.parse">
+<span id="zensols-db-parse-module"></span><h2>zensols.db.parse module<a class="headerlink" href="#module-zensols.db.parse" title="Permalink to this headline">¶</a></h2>
+<p>Simple parsing of a dynamic definition langauge (DDL) and dynamic
+manipulation language (DML) files.</p>
+<dl class="py class">
+<dt id="zensols.db.parse.DynamicDataParser">
+<em class="property">class </em><code class="sig-prename descclassname">zensols.db.parse.</code><code class="sig-name descname">DynamicDataParser</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dd_path</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/parse.html#DynamicDataParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.parse.DynamicDataParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Parse a DDL/DML file meant also for prototyping.</p>
+<p>For example the file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">--</span> <span class="n">meta</span><span class="o">=</span><span class="n">init_sections</span><span class="o">=</span><span class="n">create_tables</span><span class="p">,</span><span class="n">create_idx</span>
+<span class="o">--</span> <span class="n">name</span><span class="o">=</span><span class="n">create_idx</span>
+<span class="n">create</span> <span class="n">index</span> <span class="n">person_name</span> <span class="n">on</span> <span class="n">person</span><span class="p">(</span><span class="n">name</span><span class="p">);</span>
+
+<span class="o">--</span> <span class="n">name</span><span class="o">=</span><span class="n">create_tables</span>
+<span class="n">create</span> <span class="n">table</span> <span class="n">person</span> <span class="p">(</span><span class="nb">id</span> <span class="nb">int</span><span class="p">,</span> <span class="n">name</span> <span class="n">text</span><span class="p">,</span> <span class="n">age</span> <span class="nb">int</span><span class="p">);</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Would have <code class="docutils literal notranslate"><span class="pre">create_idx</span></code> and <code class="docutils literal notranslate"><span class="pre">create_tables</span></code> as sections and meta data:</dt><dd><dl class="simple">
+<dt>{‘init_sections’:</dt><dd><p>‘create_tables,create_idx’}</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt id="zensols.db.parse.DynamicDataParser.COMMENT_PAT">
+<code class="sig-name descname">COMMENT_PAT</code><em class="property"> = re.compile('^--.*')</em><a class="headerlink" href="#zensols.db.parse.DynamicDataParser.COMMENT_PAT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.db.parse.DynamicDataParser.META_PAT">
+<code class="sig-name descname">META_PAT</code><em class="property"> = re.compile('^-- meta=([a-zA-Z0-9_]+)=(.+)$')</em><a class="headerlink" href="#zensols.db.parse.DynamicDataParser.META_PAT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.db.parse.DynamicDataParser.SEC_START_PAT">
+<code class="sig-name descname">SEC_START_PAT</code><em class="property"> = re.compile('^-- name=([a-zA-Z0-9_]+)')</em><a class="headerlink" href="#zensols.db.parse.DynamicDataParser.SEC_START_PAT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.parse.DynamicDataParser.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dd_path</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/parse.html#DynamicDataParser.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.parse.DynamicDataParser.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dd_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a>) – the path of the file to parse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.parse.DynamicDataParser.get_init_db_sqls">
+<code class="sig-name descname">get_init_db_sqls</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/parse.html#DynamicDataParser.get_init_db_sqls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.parse.DynamicDataParser.get_init_db_sqls" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the set of statements that create all DB objects needed to fully
+CRUD.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.parse.DynamicDataParser.meta">
+<em class="property">property </em><code class="sig-name descname">meta</code><a class="headerlink" href="#zensols.db.parse.DynamicDataParser.meta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the meta data found int he parse object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.parse.DynamicDataParser.sections">
+<em class="property">property </em><code class="sig-name descname">sections</code><a class="headerlink" href="#zensols.db.parse.DynamicDataParser.sections" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the sections of the file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-zensols.db.sqlite">
+<span id="zensols-db-sqlite-module"></span><h2>zensols.db.sqlite module<a class="headerlink" href="#module-zensols.db.sqlite" title="Permalink to this headline">¶</a></h2>
+<p>Convenience wrapper for the Python DB-API library, and some specificly for
+the SQLite library.</p>
+<dl class="py class">
+<dt id="zensols.db.sqlite.SqliteConnectionManager">
+<em class="property">class </em><code class="sig-prename descclassname">zensols.db.sqlite.</code><code class="sig-name descname">SqliteConnectionManager</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">db_file</span></em>, <em class="sig-param"><span class="n">create_db</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/sqlite.html#SqliteConnectionManager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.sqlite.SqliteConnectionManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#zensols.db.bean.ConnectionManager" title="zensols.db.bean.ConnectionManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">zensols.db.bean.ConnectionManager</span></code></a></p>
+<p>An SQLite connection factory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a>) – the SQLite database file to read or create</p></li>
+<li><p><strong>persister</strong> – the persister that will use this connection factory
+(needed to get the initialization DDL SQL)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="zensols.db.sqlite.SqliteConnectionManager.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">db_file</span></em>, <em class="sig-param"><span class="n">create_db</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#zensols.db.sqlite.SqliteConnectionManager.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.sqlite.SqliteConnectionManager.create">
+<code class="sig-name descname">create</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/sqlite.html#SqliteConnectionManager.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.sqlite.SqliteConnectionManager.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a connection to the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/sqlite3.html#sqlite3.Connection" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Connection</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.db.sqlite.SqliteConnectionManager.create_db">
+<code class="sig-name descname">create_db</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)">bool</a></em><em class="property"> = True</em><a class="headerlink" href="#zensols.db.sqlite.SqliteConnectionManager.create_db" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="zensols.db.sqlite.SqliteConnectionManager.db_file">
+<code class="sig-name descname">db_file</code><em class="property">: <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.9)">pathlib.Path</a></em><a class="headerlink" href="#zensols.db.sqlite.SqliteConnectionManager.db_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="zensols.db.sqlite.SqliteConnectionManager.drop">
+<code class="sig-name descname">drop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/zensols/db/sqlite.html#SqliteConnectionManager.drop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#zensols.db.sqlite.SqliteConnectionManager.drop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete the SQLite database file from the file system.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-zensols.db">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-zensols.db" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../CONTRIBUTING.html" class="btn btn-neutral float-right" title="Contributing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../api.html" class="btn btn-neutral float-left" title="API Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2021, Paul Landes
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

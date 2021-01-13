@@ -1,0 +1,798 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>zensols.db.bean &mdash; Database convenience utilities. 0.0.9 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../top.html" class="icon icon-home" alt="Documentation Home"> Database convenience utilities.
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.9
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CONTRIBUTING.html">Contributing</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../top.html">Database convenience utilities.</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../top.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>zensols.db.bean</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for zensols.db.bean</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Basic CRUD utility classes</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;Paul Landes&#39;</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">fields</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span><span class="p">,</span> <span class="n">ABC</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">zensols.persist</span> <span class="kn">import</span> <span class="n">resource</span><span class="p">,</span> <span class="n">Stash</span>
+<span class="kn">from</span> <span class="nn">zensols.db</span> <span class="kn">import</span> <span class="n">DynamicDataParser</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="connection"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.connection">[docs]</a><span class="k">class</span> <span class="nc">connection</span><span class="p">(</span><span class="n">resource</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Annotation used to create and dispose of DB-API connections.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="connection.__init__"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.connection.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s1">&#39;_create_connection&#39;</span><span class="p">,</span> <span class="s1">&#39;_dispose_connection&#39;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="ConnectionManager"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.ConnectionManager">[docs]</a><span class="k">class</span> <span class="nc">ConnectionManager</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Instance DB-API connection lifecycle.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ConnectionManager.register_persister"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.ConnectionManager.register_persister">[docs]</a>    <span class="k">def</span> <span class="nf">register_persister</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">persister</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Register the persister used for this connection manager.</span>
+
+<span class="sd">        :param persister: the persister used for connection management</span>
+<span class="sd">        :type persister: DbPersister</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">persister</span> <span class="o">=</span> <span class="n">persister</span></div>
+
+<div class="viewcode-block" id="ConnectionManager.create"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.ConnectionManager.create">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Create a connection to the database.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="ConnectionManager.dispose"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.ConnectionManager.dispose">[docs]</a>    <span class="k">def</span> <span class="nf">dispose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Close the connection to the database.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ConnectionManager.drop"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.ConnectionManager.drop">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">drop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Remove all objects from the database or the database itself.</span>
+
+<span class="sd">        For SQLite, this deletes the file.  In database implementations, this</span>
+<span class="sd">        might drop all objects from the database.  Regardless, it is expected</span>
+<span class="sd">        that ``create`` is able to recreate the database after this action.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_dict_factory</span><span class="p">(</span><span class="n">cursor</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">row</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">]):</span>
+        <span class="sd">&quot;&quot;&quot;Create a default dictionary factory used by the cursor.</span>
+
+<span class="sd">        :param cursor: the database cursor object, which has a ``description``</span>
+<span class="sd">                       attribute</span>
+
+<span class="sd">        :param row: the row given by the database to be mapped to a ``dict``</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cursor</span><span class="o">.</span><span class="n">description</span><span class="p">):</span>
+            <span class="n">d</span><span class="p">[</span><span class="n">col</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">d</span>
+
+    <span class="k">def</span> <span class="nf">_to_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">res</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">cursor</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return a Pandas dataframe from the results given by the database.</span>
+
+<span class="sd">        :param res: the database results row by row</span>
+
+<span class="sd">        :param cursor: the database cursor object, which has a ``description``</span>
+<span class="sd">                       attribute</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cursor</span><span class="o">.</span><span class="n">description</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">cols</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ConnectionManager.execute"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.ConnectionManager.execute">[docs]</a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">sql</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
+                <span class="n">row_factory</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">],</span>
+                <span class="n">map_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;Execute SQL on a database connection.</span>
+
+<span class="sd">        :param conn: the connection object with the database</span>
+
+<span class="sd">        :param sql: the string SQL to execute</span>
+
+<span class="sd">        :param params: the parameters given to the SQL statement (populated</span>
+<span class="sd">                       with ``?``) in the statement</span>
+
+<span class="sd">        :param row_factory: informs how to create result sets, which is one of:</span>
+
+<span class="sd">            * ``tuple``: tuples (the default)</span>
+<span class="sd">            * ``dict``: for dictionaries</span>
+<span class="sd">            * ``pandas``: for a :class:`pandas.DataFrame`</span>
+<span class="sd">            * otherwise: a function or class</span>
+
+<span class="sd">        :see: :meth:`.DbPersister.execute`.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">second</span><span class="p">(</span><span class="n">cursor</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
+
+        <span class="n">rfs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;dict&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict_factory</span><span class="p">,</span>
+               <span class="s1">&#39;tuple&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+               <span class="s1">&#39;pandas&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">row_factory</span> <span class="ow">in</span> <span class="n">rfs</span><span class="p">:</span>
+            <span class="n">rfac</span> <span class="o">=</span> <span class="n">rfs</span><span class="p">[</span><span class="n">row_factory</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">cls</span> <span class="o">=</span> <span class="n">row_factory</span>
+            <span class="n">rfac</span> <span class="o">=</span> <span class="n">second</span>
+        <span class="k">if</span> <span class="n">rfac</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">conn</span><span class="o">.</span><span class="n">row_factory</span> <span class="o">=</span> <span class="n">rfac</span>
+        <span class="n">cur</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">tupify</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">map_fn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">map_fn</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">row_factory</span> <span class="o">==</span> <span class="s1">&#39;pandas&#39;</span><span class="p">:</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_dataframe</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">cur</span><span class="p">)</span>
+                <span class="n">tupify</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="n">tupify</span><span class="p">:</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">res</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="n">cur</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ConnectionManager.execute_no_read"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.ConnectionManager.execute_no_read">[docs]</a>    <span class="k">def</span> <span class="nf">execute_no_read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">,</span> <span class="n">sql</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;See :meth:`.DbPersister.execute_no_read`.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cur</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">logger</span><span class="o">.</span><span class="n">isEnabledFor</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">):</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;sql: </span><span class="si">{</span><span class="n">sql</span><span class="si">}</span><span class="s1">, params: </span><span class="si">{</span><span class="n">params</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+            <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">cur</span><span class="o">.</span><span class="n">lastrowid</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="n">cur</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ConnectionManager.insert_rows"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.ConnectionManager.insert_rows">[docs]</a>    <span class="k">def</span> <span class="nf">insert_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">sql</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rows</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
+                    <span class="n">errors</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">set_id_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
+                    <span class="n">map_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;See :meth:`.InsertableBeanDbPersister.insert_rows`.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cur</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">map_fn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">org_row</span> <span class="o">=</span> <span class="n">row</span>
+                    <span class="n">row</span> <span class="o">=</span> <span class="n">map_fn</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">errors</span> <span class="o">==</span> <span class="s1">&#39;raise&#39;</span><span class="p">:</span>
+                    <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span> <span class="n">row</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">errors</span> <span class="o">==</span> <span class="s1">&#39;ignore&#39;</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span> <span class="n">row</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;could not insert row (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">)</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;unknown errors value: </span><span class="si">{</span><span class="n">errors</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">set_id_fn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">set_id_fn</span><span class="p">(</span><span class="n">org_row</span><span class="p">,</span> <span class="n">cur</span><span class="o">.</span><span class="n">lastrowid</span><span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+            <span class="n">cur</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">cur</span><span class="o">.</span><span class="n">lastrowid</span></div></div>
+
+
+<div class="viewcode-block" id="DbPersister"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.DbPersister">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">DbPersister</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;CRUDs data to/from a DB-API connection.</span>
+
+<span class="sd">    :param sql_file: the text file containing the SQL statements (see</span>
+<span class="sd">                     :class:`DynamicDataParser`)</span>
+
+<span class="sd">    :param conn_manager: used to create DB-API connections</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sql_file</span><span class="p">:</span> <span class="n">Path</span>
+    <span class="sd">&quot;&quot;&quot;the text file containing the SQL statements (see :class:`DynamicDataParser`)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">conn_manager</span><span class="p">:</span> <span class="n">ConnectionManager</span>
+    <span class="sd">&quot;&quot;&quot;used to create DB-API connections&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">DynamicDataParser</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sql_file</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conn_manager</span><span class="o">.</span><span class="n">register_persister</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sql_entries</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return a dictionary of names -&gt; SQL statements from the SQL file.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">sections</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the metadata associated with the SQL file.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">meta</span>
+
+    <span class="k">def</span> <span class="nf">_create_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create a connection to the database.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;creating connection&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn_manager</span><span class="o">.</span><span class="n">create</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_dispose_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Close the connection to the database.</span>
+
+<span class="sd">        :param conn: the connection to release</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;closing connection </span><span class="si">{</span><span class="n">conn</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conn_manager</span><span class="o">.</span><span class="n">dispose</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_check_entry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;no defined SQL entry for persist function&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;non-optional entry not provided&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sql_entries</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;no entry &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; found in SQL configuration&quot;</span><span class="p">)</span>
+
+    <span class="nd">@connection</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">sql</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">(),</span>
+                <span class="n">row_factory</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;tuple&#39;</span><span class="p">,</span>
+                <span class="n">map_fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> \
+            <span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;Execute SQL on a database connection.</span>
+
+<span class="sd">        :param sql: the string SQL to execute</span>
+
+<span class="sd">        :param params: the parameters given to the SQL statement (populated</span>
+<span class="sd">                       with ``?``) in the statement</span>
+
+<span class="sd">        :param row_factory: informs how to create result sets, which is one of:</span>
+
+<span class="sd">            * ``tuple``: tuples (the default)</span>
+<span class="sd">            * ``dict``: for dictionaries</span>
+<span class="sd">            * ``pandas``: for a :class:`pandas.DataFrame`</span>
+<span class="sd">            * otherwise: a function or class</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn_manager</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+            <span class="n">conn</span><span class="p">,</span> <span class="n">sql</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">row_factory</span><span class="p">,</span> <span class="n">map_fn</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DbPersister.execute_by_name"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.DbPersister.execute_by_name">[docs]</a>    <span class="k">def</span> <span class="nf">execute_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">(),</span>
+                        <span class="n">row_factory</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;tuple&#39;</span><span class="p">,</span>
+                        <span class="n">map_fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Just like :meth:`execute` but look up the SQL.</span>
+
+<span class="sd">        :param name: the name of the SQL entry used for the query</span>
+
+<span class="sd">        :see: :meth:`execute`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_entry</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">sql</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sql_entries</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">row_factory</span><span class="p">,</span> <span class="n">map_fn</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DbPersister.execute_singleton_by_name"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.DbPersister.execute_singleton_by_name">[docs]</a>    <span class="k">def</span> <span class="nf">execute_singleton_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Just like :meth:`execute_by_name` except return only the first item or</span>
+<span class="sd">        ``None`` if no results.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_by_name</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+    <span class="nd">@connection</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">execute_sql_no_read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">sql</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                            <span class="n">params</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">())</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn_manager</span><span class="o">.</span><span class="n">execute_no_read</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">sql</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+
+    <span class="nd">@connection</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">execute_no_read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">entry_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                        <span class="n">params</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">())</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Execute SQL without reading data back.</span>
+
+<span class="sd">        :param entry_name: the key in the SQL file whose value is used as the</span>
+<span class="sd">                           statement</span>
+
+<span class="sd">        :param capture_rowid: if ``True``, return the last row ID from the</span>
+<span class="sd">                              cursor</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_entry</span><span class="p">(</span><span class="n">entry_name</span><span class="p">)</span>
+        <span class="n">sql</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sql_entries</span><span class="p">[</span><span class="n">entry_name</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn_manager</span><span class="o">.</span><span class="n">execute_no_read</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">sql</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Bean"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.Bean">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Bean</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A container class like a Java *bean*.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Bean.get_attr_names"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.Bean.get_attr_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_attr_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return a list of string attribute names.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">f</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">fields</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span></div>
+
+<div class="viewcode-block" id="Bean.get_attrs"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.Bean.get_attrs">[docs]</a>    <span class="k">def</span> <span class="nf">get_attrs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return a dict of attributes that are meant to be persisted.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">n</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_attr_names</span><span class="p">()}</span></div>
+
+<div class="viewcode-block" id="Bean.get_row"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.Bean.get_row">[docs]</a>    <span class="k">def</span> <span class="nf">get_row</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return a row of data meant to be printed.  This includes the unique ID of</span>
+<span class="sd">        the bean (see :meth:`get_insert_row`).</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_attr_names</span><span class="p">()))</span></div>
+
+<div class="viewcode-block" id="Bean.get_insert_row"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.Bean.get_insert_row">[docs]</a>    <span class="k">def</span> <span class="nf">get_insert_row</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return a row of data meant to be inserted into the database.  This method</span>
+<span class="sd">        implementation leaves off the first attriubte assuming it contains a</span>
+<span class="sd">        unique (i.e. row ID) of the object.  See :meth:`get_row`.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_attr_names</span><span class="p">()</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span> <span class="n">names</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span></div>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">other</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="bp">self</span> <span class="ow">is</span> <span class="n">other</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="vm">__class__</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_attr_names</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">vals</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_attr_names</span><span class="p">()))</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                             <span class="bp">self</span><span class="o">.</span><span class="n">get_attr_names</span><span class="p">()))</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ReadOnlyBeanDbPersister"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.ReadOnlyBeanDbPersister">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">ReadOnlyBeanDbPersister</span><span class="p">(</span><span class="n">DbPersister</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A read-only persister that CRUDs data based on predefined SQL given in the</span>
+<span class="sd">    configuration.  The class optionally works with instances of :class:`.Bean`</span>
+<span class="sd">    when :obj:`row_factory` is set to the target bean class.</span>
+
+<span class="sd">    :param select_name: the name of the SQL entry used to select data/class</span>
+
+<span class="sd">    :param select_by_id: the name of the SQL entry used to select a single row</span>
+<span class="sd">                         by unique ID</span>
+
+<span class="sd">    :param select_exists: the name of the SQL entry used to determine if a</span>
+<span class="sd">                          row exists by unique ID</span>
+
+<span class="sd">    :param row_factory: the row_factory parameter for ``get_*`` methods</span>
+<span class="sd">                        when none is given (see class docs)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">select_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">select_by_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">select_exists</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">row_factory</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s1">&#39;tuple&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ReadOnlyBeanDbPersister.get"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.ReadOnlyBeanDbPersister.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return using the SQL provided by the entry identified by :obj:`select_name`.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_by_name</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">select_name</span><span class="p">,</span> <span class="n">row_factory</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">row_factory</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ReadOnlyBeanDbPersister.get_by_id"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.ReadOnlyBeanDbPersister.get_by_id">[docs]</a>    <span class="k">def</span> <span class="nf">get_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return an object using it&#39;s unique ID, which is could be the row ID in</span>
+<span class="sd">        SQLite.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_by_name</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">select_by_id</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">(</span><span class="nb">id</span><span class="p">,),</span> <span class="n">row_factory</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">row_factory</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="ReadOnlyBeanDbPersister.exists"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.ReadOnlyBeanDbPersister.exists">[docs]</a>    <span class="k">def</span> <span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return ``True`` if there is a object with unique ID (or row ID) in the</span>
+<span class="sd">        database.  Otherwise return ``False``.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">select_exists</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_by_id</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cnt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_by_name</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">select_exists</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">(</span><span class="nb">id</span><span class="p">,),</span> <span class="n">row_factory</span><span class="o">=</span><span class="s1">&#39;tuple&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">cnt</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span></div></div>
+
+
+<div class="viewcode-block" id="InsertableBeanDbPersister"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.InsertableBeanDbPersister">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">InsertableBeanDbPersister</span><span class="p">(</span><span class="n">ReadOnlyBeanDbPersister</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A class that contains insert funtionality.</span>
+
+<span class="sd">    :param insert_name: the name of the SQL entry used to insert data/class</span>
+<span class="sd">                        instance</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">insert_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+<div class="viewcode-block" id="InsertableBeanDbPersister.insert_row"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.InsertableBeanDbPersister.insert_row">[docs]</a>    <span class="k">def</span> <span class="nf">insert_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">row</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Insert a row in the database and return the current row ID.</span>
+
+<span class="sd">        :param row: a sequence of data in column order of the SQL provided by</span>
+<span class="sd">                    the entry :obj:`insert_name`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_no_read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">insert_name</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">row</span><span class="p">)</span></div>
+
+    <span class="nd">@connection</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">insert_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">rows</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;raise&#39;</span><span class="p">,</span>
+                    <span class="n">set_id_fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="n">map_fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Insert a tuple of rows in the database and return the current row ID.</span>
+
+<span class="sd">        :param row: a sequence of tuples of data (or an object to be</span>
+<span class="sd">                    transformed, see ``map_fn`` in column order of the SQL</span>
+<span class="sd">                    provided by the entry :obj:`insert_name`</span>
+
+<span class="sd">        :param errors: if this is the string ``raise`` then raise an error on</span>
+<span class="sd">                       any exception when invoking the database execute</span>
+
+<span class="sd">        :param map_fn: if not ``None``, used to transform the given row in to a</span>
+<span class="sd">                       tuple that is used for the insertion</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">entry_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">insert_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_entry</span><span class="p">(</span><span class="n">entry_name</span><span class="p">)</span>
+        <span class="n">sql</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sql_entries</span><span class="p">[</span><span class="n">entry_name</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn_manager</span><span class="o">.</span><span class="n">insert_rows</span><span class="p">(</span>
+            <span class="n">conn</span><span class="p">,</span> <span class="n">sql</span><span class="p">,</span> <span class="n">rows</span><span class="p">,</span> <span class="n">errors</span><span class="p">,</span> <span class="n">set_id_fn</span><span class="p">,</span> <span class="n">map_fn</span><span class="p">)</span>
+
+<div class="viewcode-block" id="InsertableBeanDbPersister.insert"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.InsertableBeanDbPersister.insert">[docs]</a>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bean</span><span class="p">:</span> <span class="n">Bean</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Insert a bean using the order of the values given in :meth:`get_insert_row`</span>
+<span class="sd">        as that of the SQL defined with entry :obj:`insert_name` given in the</span>
+<span class="sd">        initializer.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">curid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">insert_row</span><span class="p">(</span><span class="o">*</span><span class="n">bean</span><span class="o">.</span><span class="n">get_insert_row</span><span class="p">())</span>
+        <span class="n">bean</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">curid</span>
+        <span class="k">return</span> <span class="n">curid</span></div>
+
+<div class="viewcode-block" id="InsertableBeanDbPersister.insert_beans"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.InsertableBeanDbPersister.insert_beans">[docs]</a>    <span class="k">def</span> <span class="nf">insert_beans</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beans</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">errors</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;raise&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Insert a bean using the order of the values given in :meth:`get_insert_row`</span>
+<span class="sd">        as that of the SQL defined with entry :obj:`insert_name` given in the</span>
+<span class="sd">        initializer.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">map_fn</span><span class="p">(</span><span class="n">bean</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">bean</span><span class="o">.</span><span class="n">get_insert_row</span><span class="p">()</span>
+
+        <span class="k">def</span> <span class="nf">set_id_fn</span><span class="p">(</span><span class="n">bean</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+            <span class="k">pass</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">insert_rows</span><span class="p">(</span><span class="n">beans</span><span class="p">,</span> <span class="n">errors</span><span class="p">,</span> <span class="n">set_id_fn</span><span class="p">,</span> <span class="n">map_fn</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="UpdatableBeanDbPersister"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.UpdatableBeanDbPersister">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">UpdatableBeanDbPersister</span><span class="p">(</span><span class="n">InsertableBeanDbPersister</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A class that contains the remaining CRUD funtionality the super class</span>
+<span class="sd">    doesn&#39;t have.</span>
+
+<span class="sd">    :param update_name: the name of the SQL entry used to update data/class</span>
+<span class="sd">                        instance(s)</span>
+
+<span class="sd">    :param delete_name: the name of the SQL entry used to delete data/class</span>
+<span class="sd">                        instance(s)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">update_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">delete_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+<div class="viewcode-block" id="UpdatableBeanDbPersister.update_row"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.UpdatableBeanDbPersister.update_row">[docs]</a>    <span class="k">def</span> <span class="nf">update_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">row</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Update a row using the values of the row with the current unique ID as the</span>
+<span class="sd">        first element in ``*rows``.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">where_row</span> <span class="o">=</span> <span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_no_read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update_name</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">where_row</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="UpdatableBeanDbPersister.update"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.UpdatableBeanDbPersister.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bean</span><span class="p">:</span> <span class="n">Bean</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Update a a bean that using the ``id`` attribute and its attributes as</span>
+<span class="sd">        values.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_row</span><span class="p">(</span><span class="o">*</span><span class="n">bean</span><span class="o">.</span><span class="n">get_row</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="UpdatableBeanDbPersister.delete"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.UpdatableBeanDbPersister.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Delete a row by ID.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_no_read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delete_name</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">(</span><span class="nb">id</span><span class="p">,))</span></div></div>
+
+
+<div class="viewcode-block" id="BeanDbPersister"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.BeanDbPersister">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">BeanDbPersister</span><span class="p">(</span><span class="n">UpdatableBeanDbPersister</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A class that contains the remaining CRUD funtionality the super class</span>
+<span class="sd">    doesn&#39;t have.</span>
+
+<span class="sd">    :param keys_name: the name of the SQL entry used to fetch all keys</span>
+
+<span class="sd">    :param count_name: the name of the SQL entry used to get a row count</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">keys_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">count_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BeanDbPersister.get_keys"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.BeanDbPersister.get_keys">[docs]</a>    <span class="k">def</span> <span class="nf">get_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Delete a row by ID.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_by_name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">keys_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">keys</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BeanDbPersister.get_count"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.BeanDbPersister.get_count">[docs]</a>    <span class="k">def</span> <span class="nf">get_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return the number of rows in the bean table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cnt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_by_name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count_name</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">cnt</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># SQLite has a bug that returns one row with all null values</span>
+            <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_keys</span><span class="p">())</span></div></div>
+
+
+<div class="viewcode-block" id="BeanStash"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.BeanStash">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">BeanStash</span><span class="p">(</span><span class="n">Stash</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A stash that uses a backing DB-API backed :class:`BeanDbPersister`.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="BeanStash.__init__"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.BeanStash.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">persister</span><span class="p">:</span> <span class="n">BeanDbPersister</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">persister</span> <span class="o">=</span> <span class="n">persister</span></div>
+
+<div class="viewcode-block" id="BeanStash.load"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.BeanStash.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">persister</span><span class="o">.</span><span class="n">get_by_id</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">name</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="BeanStash.exists"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.BeanStash.exists">[docs]</a>    <span class="k">def</span> <span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">persister</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">name</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="BeanStash.dump"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.BeanStash.dump">[docs]</a>    <span class="k">def</span> <span class="nf">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">inst</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Since this implementation can let the database auto-increment the</span>
+<span class="sd">        unique/primary key, beware of &quot;changing&quot; keys.  If the key changes</span>
+<span class="sd">        after inserted it will raise a ``ValueError``.  For this reason, it&#39;s</span>
+<span class="sd">        best to pass ``None`` as ``name``.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">inst</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">id</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">id</span> <span class="o">=</span> <span class="n">inst</span><span class="o">.</span><span class="n">id</span>
+        <span class="k">if</span> <span class="nb">id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="nb">id</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">persister</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">inst</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">persister</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">inst</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">inst</span><span class="o">.</span><span class="n">id</span> <span class="o">!=</span> <span class="nb">id</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;unexpected key change: </span><span class="si">{</span><span class="n">inst</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s1"> != </span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">inst</span></div>
+
+<div class="viewcode-block" id="BeanStash.delete"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.BeanStash.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">persister</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BeanStash.keys"><a class="viewcode-back" href="../../../api/zensols.db.html#zensols.db.bean.BeanStash.keys">[docs]</a>    <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">persister</span><span class="o">.</span><span class="n">get_keys</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">persister</span><span class="o">.</span><span class="n">get_count</span><span class="p">()</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2021, Paul Landes
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
