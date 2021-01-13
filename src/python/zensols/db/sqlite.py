@@ -40,7 +40,7 @@ class SqliteConnectionManager(ConnectionManager):
         types = sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES
         conn = sqlite3.connect(str(db_file.absolute()), detect_types=types)
         if created:
-            logger.info(f'initializing database...')
+            logger.info('initializing database...')
             for sql in self.persister.parser.get_init_db_sqls():
                 logger.debug(f'invoking sql: {sql}')
                 conn.execute(sql)

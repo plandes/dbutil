@@ -3,7 +3,7 @@
 """
 __author__ = 'Paul Landes'
 
-from typing import Dict, Any, Tuple, Union, Callable
+from typing import Dict, Any, Tuple, Union, Callable, Iterable
 from dataclasses import dataclass, field, fields
 from abc import abstractmethod, ABC
 import logging
@@ -129,8 +129,9 @@ class ConnectionManager(ABC):
         finally:
             cur.close()
 
-    def insert_rows(self, conn, sql, rows: list, errors: str,
-                    set_id_fn, map_fn) -> int:
+    def insert_rows(self, conn: Any, sql: str, rows: Iterable[Any],
+                    errors: str, set_id_fn: Callable,
+                    map_fn: Callable) -> int:
         """See :meth:`.InsertableBeanDbPersister.insert_rows`.
 
         """
@@ -168,7 +169,11 @@ class DbPersister(object):
 
     """
     sql_file: Path
+    """the text file containing the SQL statements (see :class:`DynamicDataParser`)
+
+    """
     conn_manager: ConnectionManager
+    """used to create DB-API connections"""
 
     def __post_init__(self):
         self.parser = DynamicDataParser(self.sql_file)
@@ -213,9 +218,10 @@ class DbPersister(object):
             raise ValueError(f"no entry '{name}' found in SQL configuration")
 
     @connection()
-    def execute(self, conn: Any, sql: str, params: Tuple[Any],
-                row_factory: Union[str, Callable],
-                map_fn: Callable) -> Tuple[Union[dict, tuple, pd.DataFrame]]:
+    def execute(self, conn: Any, sql: str, params: Tuple[Any] = (),
+                row_factory: Union[str, Callable] = 'tuple',
+                map_fn: Callable = None) -> \
+            Tuple[Union[dict, tuple, pd.DataFrame]]:
         """Execute SQL on a database connection.
 
         :param sql: the string SQL to execute
@@ -234,8 +240,9 @@ class DbPersister(object):
         return self.conn_manager.execute(
             conn, sql, params, row_factory, map_fn)
 
-    def execute_by_name(self, name, params=(), row_factory='tuple',
-                        map_fn=None):
+    def execute_by_name(self, name: str, params: Tuple[Any] = (),
+                        row_factory: Union[str, Callable] = 'tuple',
+                        map_fn: Callable = None):
         """Just like :meth:`execute` but look up the SQL.
 
         :param name: the name of the SQL entry used for the query
@@ -257,11 +264,13 @@ class DbPersister(object):
             return res[0]
 
     @connection()
-    def execute_sql_no_read(self, conn, sql, params=()) -> int:
+    def execute_sql_no_read(self, conn: Any, sql: str,
+                            params: Tuple[Any] = ()) -> int:
         return self.conn_manager.execute_no_read(conn, sql, params)
 
     @connection()
-    def execute_no_read(self, conn, entry_name, params=()) -> int:
+    def execute_no_read(self, conn: Any, entry_name: str,
+                        params: Tuple[Any] = ()) -> int:
         """Execute SQL without reading data back.
 
         :param entry_name: the key in the SQL file whose value is used as the
@@ -287,23 +296,23 @@ class Bean(ABC):
         """
         return tuple(map(lambda f: f.name, fields(self)))
 
-    def get_attrs(self) -> dict:
+    def get_attrs(self) -> Dict[str, Any]:
         """Return a dict of attributes that are meant to be persisted.
 
         """
         return {n: getattr(self, n) for n in self.get_attr_names()}
 
-    def get_row(self) -> tuple:
+    def get_row(self) -> Tuple[Any]:
         """Return a row of data meant to be printed.  This includes the unique ID of
-        the bean (see ``get_insert_row``).
+        the bean (see :meth:`get_insert_row`).
 
         """
         return tuple(map(lambda x: getattr(self, x), self.get_attr_names()))
 
-    def get_insert_row(self) -> tuple:
+    def get_insert_row(self) -> Tuple[Any]:
         """Return a row of data meant to be inserted into the database.  This method
         implementation leaves off the first attriubte assuming it contains a
-        unique (i.e. row ID) of the object.  See ``get_row``.
+        unique (i.e. row ID) of the object.  See :meth:`get_row`.
 
         """
         names = self.get_attr_names()
@@ -347,11 +356,10 @@ class ReadOnlyBeanDbPersister(DbPersister):
     :param select_exists: the name of the SQL entry used to determine if a
                           row exists by unique ID
 
-    :param row_factory: the row_factory parameter for all ``get_*`` methods
+    :param row_factory: the row_factory parameter for ``get_*`` methods
                         when none is given (see class docs)
 
     """
-
     select_name: str = field(default=None)
     select_by_id: str = field(default=None)
     select_exists: str = field(default=None)
@@ -401,21 +409,24 @@ class InsertableBeanDbPersister(ReadOnlyBeanDbPersister):
         """Insert a row in the database and return the current row ID.
 
         :param row: a sequence of data in column order of the SQL provided by
-                    the entry ``insert_name``
+                    the entry :obj:`insert_name`
 
         """
         return self.execute_no_read(self.insert_name, params=row)
 
     @connection()
-    def insert_rows(self, conn, rows: list, errors='raise',
-                    set_id_fn=None, map_fn=None) -> int:
+    def insert_rows(self, conn: Any, rows: Iterable[Any], errors='raise',
+                    set_id_fn: Callable = None,
+                    map_fn: Callable = None) -> int:
         """Insert a tuple of rows in the database and return the current row ID.
 
         :param row: a sequence of tuples of data (or an object to be
                     transformed, see ``map_fn`` in column order of the SQL
-                    provided by the entry ``insert_name``
+                    provided by the entry :obj:`insert_name`
+
         :param errors: if this is the string ``raise`` then raise an error on
                        any exception when invoking the database execute
+
         :param map_fn: if not ``None``, used to transform the given row in to a
                        tuple that is used for the insertion
 
@@ -427,8 +438,8 @@ class InsertableBeanDbPersister(ReadOnlyBeanDbPersister):
             conn, sql, rows, errors, set_id_fn, map_fn)
 
     def insert(self, bean: Bean) -> int:
-        """Insert a bean using the order of the values given in ``get_insert_row`` as
-        that of the SQL defined with entry ``insert_name`` given in the
+        """Insert a bean using the order of the values given in :meth:`get_insert_row`
+        as that of the SQL defined with entry :obj:`insert_name` given in the
         initializer.
 
         """
@@ -436,9 +447,9 @@ class InsertableBeanDbPersister(ReadOnlyBeanDbPersister):
         bean.id = curid
         return curid
 
-    def insert_beans(self, beans: list, errors='raise') -> int:
-        """Insert a bean using the order of the values given in ``get_insert_row`` as
-        that of the SQL defined with entry ``insert_name`` given in the
+    def insert_beans(self, beans: Iterable[Any], errors: str = 'raise') -> int:
+        """Insert a bean using the order of the values given in :meth:`get_insert_row`
+        as that of the SQL defined with entry :obj:`insert_name` given in the
         initializer.
 
         """
@@ -457,12 +468,16 @@ class UpdatableBeanDbPersister(InsertableBeanDbPersister):
     doesn't have.
 
     :param update_name: the name of the SQL entry used to update data/class
-                        instance
+                        instance(s)
+
+    :param delete_name: the name of the SQL entry used to delete data/class
+                        instance(s)
+
     """
     update_name: str = field(default=None)
     delete_name: str = field(default=None)
 
-    def update_row(self, *row) -> int:
+    def update_row(self, *row: Tuple[Any]) -> int:
         """Update a row using the values of the row with the current unique ID as the
         first element in ``*rows``.
 
@@ -489,8 +504,9 @@ class BeanDbPersister(UpdatableBeanDbPersister):
     """A class that contains the remaining CRUD funtionality the super class
     doesn't have.
 
-    :param update_name: the name of the SQL entry used to update data/class
-                        instance
+    :param keys_name: the name of the SQL entry used to fetch all keys
+
+    :param count_name: the name of the SQL entry used to get a row count
     """
     keys_name: str = field(default=None)
     count_name: str = field(default=None)

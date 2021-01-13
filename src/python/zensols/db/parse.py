@@ -16,11 +16,12 @@ logger = logging.getLogger(__name__)
 class DynamicDataParser(object):
     """Parse a DDL/DML file meant also for prototyping.
 
-    For example the file:
+    For example the file::
 
         -- meta=init_sections=create_tables,create_idx
         -- name=create_idx
         create index person_name on person(name);
+
         -- name=create_tables
         create table person (id int, name text, age int);
 
@@ -36,6 +37,7 @@ class DynamicDataParser(object):
         """Initialize.
 
         :param dd_path: the path of the file to parse
+
         """
         self.dd_path = dd_path
 
