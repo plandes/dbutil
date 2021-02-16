@@ -8,7 +8,7 @@ import logging
 from dataclasses import dataclass, field
 from pathlib import Path
 import sqlite3
-from zensols.db import ConnectionManager
+from zensols.db import DBError, ConnectionManager
 
 logger = logging.getLogger(__name__)
 
@@ -23,17 +23,22 @@ class SqliteConnectionManager(ConnectionManager):
 
     create_db: bool = field(default=True)
     """If ``True``, create the database if it does not already exist.  Otherwise,
-    :class:`.DBError` is raised
+    :class:`.DBError` is raised (see :meth:`create`).
 
     """
 
     def create(self) -> sqlite3.Connection:
+        """Create a connection by accessing the SQLite file.
+
+        :raise DBError: if the SQLite file does not exist
+
+        """
         db_file = self.db_file
         logger.debug(f'creating connection to {db_file}')
         created = False
         if not db_file.exists():
             if not self.create_db:
-                raise ValueError(f'database file {db_file} does not exist')
+                raise DBError(f'database file {db_file} does not exist')
             if not db_file.parent.exists():
                 logger.info(f'creating sql db directory {db_file.parent}')
                 db_file.parent.mkdir(parents=True)

@@ -569,9 +569,9 @@ class BeanStash(Stash):
         """Since this implementation can let the database auto-increment the
         unique/primary key, beware of "changing" keys.
 
-        :raises: DBError if the key changes after inserted it will raise a
-                 ``DBError``; for this reason, it's best to pass ``None`` as
-                 ``name``
+        :raises DBError: if the key changes after inserted it will raise a
+                ``DBError``; for this reason, it's best to pass ``None`` as
+                ``name``
 
         """
         if name is not None:
