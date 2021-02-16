@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+### Changed
+- Switch to new `DBError` in place of generic error.
+- Inline `dataclass` field documentation.
+
+
 ## [0.0.9] - 2021-01-12
 ### Added
 - [Pandas] data frame read access in `DbPersister`.

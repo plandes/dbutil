@@ -25,9 +25,11 @@ class DynamicDataParser(object):
         -- name=create_tables
         create table person (id int, name text, age int);
 
-    Would have ``create_idx`` and ``create_tables`` as sections and meta data:
+    Would have ``create_idx`` and ``create_tables`` as sections and meta data::
+
         {'init_sections':
          'create_tables,create_idx'}
+
     """
     COMMENT_PAT = re.compile(r'^--.*')
     SEC_START_PAT = re.compile(r'^-- name=([a-zA-Z0-9_]+)')

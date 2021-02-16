@@ -17,13 +17,15 @@ logger = logging.getLogger(__name__)
 class SqliteConnectionManager(ConnectionManager):
     """An SQLite connection factory.
 
-    :param db_file: the SQLite database file to read or create
-
-    :param persister: the persister that will use this connection factory
-                      (needed to get the initialization DDL SQL)
     """
-    db_file: Path
+    db_file: Path = field()
+    """The SQLite database file to read or create."""
+
     create_db: bool = field(default=True)
+    """If ``True``, create the database if it does not already exist.  Otherwise,
+    :class:`.DBError` is raised
+
+    """
 
     def create(self) -> sqlite3.Connection:
         db_file = self.db_file

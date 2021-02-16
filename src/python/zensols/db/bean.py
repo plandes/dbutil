@@ -15,6 +15,13 @@ from zensols.db import DynamicDataParser
 logger = logging.getLogger(__name__)
 
 
+class DBError(Exception):
+    """"Raised for all :mod:`zensols.db`` related errors.
+
+    """
+    pass
+
+
 class connection(resource):
     """Annotation used to create and dispose of DB-API connections.
 
@@ -170,7 +177,7 @@ class ConnectionManager(ABC):
                     except Exception as e:
                         logger.error(f'could not insert row ({len(row)})', e)
                 else:
-                    raise ValueError(f'unknown errors value: {errors}')
+                    raise DBError(f'unknown errors value: {errors}')
                 if set_id_fn is not None:
                     set_id_fn(org_row, cur.lastrowid)
         finally:
@@ -183,18 +190,14 @@ class ConnectionManager(ABC):
 class DbPersister(object):
     """CRUDs data to/from a DB-API connection.
 
-    :param sql_file: the text file containing the SQL statements (see
-                     :class:`DynamicDataParser`)
-
-    :param conn_manager: used to create DB-API connections
+    """
+    sql_file: Path = field()
+    """The text file containing the SQL statements (see
+    :class:`DynamicDataParser`).
 
     """
-    sql_file: Path
-    """the text file containing the SQL statements (see :class:`DynamicDataParser`)
-
-    """
-    conn_manager: ConnectionManager
-    """used to create DB-API connections"""
+    conn_manager: ConnectionManager = field()
+    """Used to create DB-API connections."""
 
     def __post_init__(self):
         self.parser = DynamicDataParser(self.sql_file)
@@ -232,11 +235,11 @@ class DbPersister(object):
 
     def _check_entry(self, name):
         if name is None:
-            raise ValueError('no defined SQL entry for persist function')
+            raise DBError('no defined SQL entry for persist function')
         if len(name) == 0:
-            raise ValueError('non-optional entry not provided')
+            raise DBError('non-optional entry not provided')
         if name not in self.sql_entries:
-            raise ValueError(f"no entry '{name}' found in SQL configuration")
+            raise DBError(f"no entry '{name}' found in SQL configuration")
 
     @connection()
     def execute(self, conn: Any, sql: str, params: Tuple[Any] = (),
@@ -369,22 +372,24 @@ class ReadOnlyBeanDbPersister(DbPersister):
     configuration.  The class optionally works with instances of :class:`.Bean`
     when :obj:`row_factory` is set to the target bean class.
 
-    :param select_name: the name of the SQL entry used to select data/class
-
-    :param select_by_id: the name of the SQL entry used to select a single row
-                         by unique ID
-
-    :param select_exists: the name of the SQL entry used to determine if a
-                          row exists by unique ID
-
-    :param row_factory: the row_factory parameter for ``get_*`` methods
-                        when none is given (see class docs)
-
     """
     select_name: str = field(default=None)
+    """The name of the SQL entry used to select data/class."""
+
     select_by_id: str = field(default=None)
+    """The name of the SQL entry used to select a single row by unique ID."""
+
     select_exists: str = field(default=None)
+    """The name of the SQL entry used to determine if a row exists by unique
+    ID.
+
+    """
+
     row_factory: str = field(default='tuple')
+    """The row_factory parameter for ``get_*`` methods when none is given (see
+    class docs).
+
+    """
 
     def get(self) -> list:
         """Return using the SQL provided by the entry identified by :obj:`select_name`.
@@ -420,11 +425,9 @@ class ReadOnlyBeanDbPersister(DbPersister):
 class InsertableBeanDbPersister(ReadOnlyBeanDbPersister):
     """A class that contains insert funtionality.
 
-    :param insert_name: the name of the SQL entry used to insert data/class
-                        instance
-
     """
     insert_name: str = field(default=None)
+    """The name of the SQL entry used to insert data/class instance."""
 
     def insert_row(self, *row) -> int:
         """Insert a row in the database and return the current row ID.
@@ -488,15 +491,12 @@ class UpdatableBeanDbPersister(InsertableBeanDbPersister):
     """A class that contains the remaining CRUD funtionality the super class
     doesn't have.
 
-    :param update_name: the name of the SQL entry used to update data/class
-                        instance(s)
-
-    :param delete_name: the name of the SQL entry used to delete data/class
-                        instance(s)
-
     """
     update_name: str = field(default=None)
+    """The name of the SQL entry used to update data/class instance(s)."""
+
     delete_name: str = field(default=None)
+    """The name of the SQL entry used to delete data/class instance(s)."""
 
     def update_row(self, *row: Tuple[Any]) -> int:
         """Update a row using the values of the row with the current unique ID as the
@@ -525,12 +525,12 @@ class BeanDbPersister(UpdatableBeanDbPersister):
     """A class that contains the remaining CRUD funtionality the super class
     doesn't have.
 
-    :param keys_name: the name of the SQL entry used to fetch all keys
-
-    :param count_name: the name of the SQL entry used to get a row count
     """
     keys_name: str = field(default=None)
+    """The name of the SQL entry used to fetch all keys."""
+
     count_name: str = field(default=None)
+    """The name of the SQL entry used to get a row count."""
 
     def get_keys(self) -> list:
         """Delete a row by ID.
@@ -567,9 +567,11 @@ class BeanStash(Stash):
 
     def dump(self, name: str, inst):
         """Since this implementation can let the database auto-increment the
-        unique/primary key, beware of "changing" keys.  If the key changes
-        after inserted it will raise a ``ValueError``.  For this reason, it's
-        best to pass ``None`` as ``name``.
+        unique/primary key, beware of "changing" keys.
+
+        :raises: DBError if the key changes after inserted it will raise a
+                 ``DBError``; for this reason, it's best to pass ``None`` as
+                 ``name``
 
         """
         if name is not None:
@@ -582,7 +584,7 @@ class BeanStash(Stash):
         else:
             self.persister.insert(inst)
         if id is not None and inst.id != id:
-            raise ValueError(f'unexpected key change: {inst.id} != {id}')
+            raise DBError(f'unexpected key change: {inst.id} != {id}')
         return inst
 
     def delete(self, name):

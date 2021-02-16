@@ -1,5 +1,5 @@
 from pathlib import Path
-from zensols.db import BeanStash
+from zensols.db import DBError, BeanStash
 from sql import Person
 from util import SqliteTestCase
 
@@ -48,7 +48,7 @@ class TestSqlLite(SqliteTestCase):
         stash.dump('1', peep)
         self.assertEqual('id: 1, name: bob, age: 55', str(stash['1']))
         self.assertEqual(1, len(stash))
-        with self.assertRaises(ValueError):
+        with self.assertRaises(DBError):
             key_change()
         self.assertEqual(2, peep.id)
         self.assertEqual(2, len(stash))
