@@ -30,7 +30,8 @@ class SqliteConnectionManager(ConnectionManager):
     def create(self) -> sqlite3.Connection:
         """Create a connection by accessing the SQLite file.
 
-        :raise DBError: if the SQLite file does not exist
+        :raise DBError: if the SQLite file does not exist (caveat see
+                        :`obj:create_db`)
 
         """
         db_file = self.db_file
