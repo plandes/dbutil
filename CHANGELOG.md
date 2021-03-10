@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   set.
 ### Added
 - Factory methods and type hints for DDL/DML SQL parsing.
+- Utility classes to persist `dataclasses.dataclass` instances.
 
 
 ## [0.0.9] - 2021-01-12

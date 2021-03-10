@@ -35,22 +35,26 @@ class SqliteConnectionManager(ConnectionManager):
 
         """
         db_file = self.db_file
-        logger.debug(f'creating connection to {db_file}')
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f'creating connection to {db_file}')
         created = False
         if not db_file.exists():
             if not self.create_db:
                 raise DBError(f'database file {db_file} does not exist')
             if not db_file.parent.exists():
-                logger.info(f'creating sql db directory {db_file.parent}')
+                if logger.isEnabledFor(logging.INFO):
+                    logger.info(f'creating sql db directory {db_file.parent}')
                 db_file.parent.mkdir(parents=True)
-            logger.info(f'creating sqlite db file: {db_file}')
+            if logger.isEnabledFor(logging.INFO):
+                logger.info(f'creating sqlite db file: {db_file}')
             created = True
         types = sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES
         conn = sqlite3.connect(str(db_file.absolute()), detect_types=types)
         if created:
             logger.info('initializing database...')
             for sql in self.persister.parser.get_init_db_sqls():
-                logger.debug(f'invoking sql: {sql}')
+                if logger.isEnabledFor(logging.DEBUG):
+                    logger.debug(f'invoking sql: {sql}')
                 conn.execute(sql)
                 conn.commit()
         return conn

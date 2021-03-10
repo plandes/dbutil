@@ -231,7 +231,8 @@ class DbPersister(object):
         """Create a connection to the database.
 
         """
-        logger.debug('creating connection')
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug('creating connection')
         return self.conn_manager.create()
 
     def _dispose_connection(self, conn):
@@ -240,7 +241,8 @@ class DbPersister(object):
         :param conn: the connection to release
 
         """
-        logger.debug(f'closing connection {conn}')
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f'closing connection {conn}')
         self.conn_manager.dispose(conn)
 
     def _check_entry(self, name):
