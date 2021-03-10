@@ -39,9 +39,9 @@ class DataClassDynamicDataParser(DynamicDataParser):
 
 @dataclass
 class DataClassDbPersister(BeanDbPersister):
-    """Persists instances of :clas:`dataclasses.dataclass` by narrowing the columns
-    from select statements. Instead of ``select *``, use ``select ${cols}`` in
-    the SQL resource file.
+    """Persists instances of :class:`dataclasses.dataclass` by narrowing the
+    columns from select statements. Instead of ``select *``, use ``select
+    ${cols}`` in the SQL resource file.
 
     :see: :class:`.DataClassDynamicDataParser`
 
