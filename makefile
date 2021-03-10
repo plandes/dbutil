@@ -4,12 +4,6 @@
 PROJ_TYPE =		python
 PROJ_MODULES=		git python-doc python-doc-deploy
 
+#PY_SRC_TEST_PAT ?=	'test_sql*.py'
+
 include ./zenbuild/main.mk
-
-.PHONY:			testparse
-testparse:
-			make PY_SRC_TEST_PAT=test_parse.py test
-
-.PHONY:			testsqlite
-testsqlite:
-			make PY_SRC_TEST_PAT=test_sqlite.py test

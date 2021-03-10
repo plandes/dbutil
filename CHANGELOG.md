@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Switch to new `DBError` in place of generic error.
 - Inline `dataclass` field documentation.
+- More utilization of `row_factory` in `DbPersister` over `tuple`.  More get
+  methods now require explicit tuple request when class level `row_factory` is
+  set.
 
 
 ## [0.0.9] - 2021-01-12

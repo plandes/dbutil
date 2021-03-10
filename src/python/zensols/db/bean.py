@@ -3,7 +3,7 @@
 """
 __author__ = 'Paul Landes'
 
-from typing import Dict, Any, Tuple, Union, Callable, Iterable
+from typing import Dict, Any, Tuple, Union, Callable, Iterable, Type
 from dataclasses import dataclass, field, fields
 from abc import abstractmethod, ABC
 import logging
@@ -199,6 +199,13 @@ class DbPersister(object):
     conn_manager: ConnectionManager = field()
     """Used to create DB-API connections."""
 
+    row_factory: Union[str, Type] = field(default='tuple')
+    """The default method by which data is returned from ``execute_*`` methods.
+
+    :see: :meth:`execute`.
+
+    """
+
     def __post_init__(self):
         self.parser = DynamicDataParser(self.sql_file)
         self.conn_manager.register_persister(self)
@@ -243,7 +250,7 @@ class DbPersister(object):
 
     @connection()
     def execute(self, conn: Any, sql: str, params: Tuple[Any] = (),
-                row_factory: Union[str, Callable] = 'tuple',
+                row_factory: Union[str, Callable] = None,
                 map_fn: Callable = None) -> \
             Tuple[Union[dict, tuple, pd.DataFrame]]:
         """Execute SQL on a database connection.
@@ -261,11 +268,12 @@ class DbPersister(object):
             * otherwise: a function or class
 
         """
+        row_factory = self.row_factory if row_factory is None else row_factory
         return self.conn_manager.execute(
             conn, sql, params, row_factory, map_fn)
 
     def execute_by_name(self, name: str, params: Tuple[Any] = (),
-                        row_factory: Union[str, Callable] = 'tuple',
+                        row_factory: Union[str, Callable] = None,
                         map_fn: Callable = None):
         """Just like :meth:`execute` but look up the SQL.
 
@@ -385,11 +393,11 @@ class ReadOnlyBeanDbPersister(DbPersister):
 
     """
 
-    row_factory: str = field(default='tuple')
-    """The row_factory parameter for ``get_*`` methods when none is given (see
-    class docs).
+    # row_factory: str = field(default='tuple')
+    # """The row_factory parameter for ``get_*`` methods when none is given (see
+    # class docs).
 
-    """
+    # """
 
     def get(self) -> list:
         """Return using the SQL provided by the entry identified by :obj:`select_name`.
@@ -536,7 +544,7 @@ class BeanDbPersister(UpdatableBeanDbPersister):
         """Delete a row by ID.
 
         """
-        keys = self.execute_by_name(self.keys_name)
+        keys = self.execute_by_name(self.keys_name, row_factory='tuple')
         return map(lambda x: x[0], keys)
 
     def get_count(self) -> int:
@@ -544,7 +552,7 @@ class BeanDbPersister(UpdatableBeanDbPersister):
 
         """
         if self.count_name is not None:
-            cnt = self.execute_by_name(self.count_name)
+            cnt = self.execute_by_name(self.count_name, row_factory='tuple')
             return cnt[0][0]
         else:
             # SQLite has a bug that returns one row with all null values
