@@ -393,12 +393,6 @@ class ReadOnlyBeanDbPersister(DbPersister):
 
     """
 
-    # row_factory: str = field(default='tuple')
-    # """The row_factory parameter for ``get_*`` methods when none is given (see
-    # class docs).
-
-    # """
-
     def get(self) -> list:
         """Return using the SQL provided by the entry identified by :obj:`select_name`.
 
