@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [0.0.10] - 2021-03-10
 ### Changed
 - Switch to new `DBError` in place of generic error.
 - Inline `dataclass` field documentation.
@@ -75,7 +76,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/dbutil/compare/v0.0.9...HEAD
+[Unreleased]: https://github.com/plandes/dbutil/compare/v0.0.10...HEAD
+[0.0.10]: https://github.com/plandes/dbutil/compare/v0.0.9...v0.0.10
 [0.0.9]: https://github.com/plandes/dbutil/compare/v0.0.8...v0.0.9
 [0.0.8]: https://github.com/plandes/dbutil/compare/v0.0.7...v0.0.8
 [0.0.7]: https://github.com/plandes/dbutil/compare/v0.0.6...v0.0.7
