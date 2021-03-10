@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - More utilization of `row_factory` in `DbPersister` over `tuple`.  More get
   methods now require explicit tuple request when class level `row_factory` is
   set.
+### Added
+- Factory methods and type hints for DDL/DML SQL parsing.
 
 
 ## [0.0.9] - 2021-01-12

@@ -207,8 +207,11 @@ class DbPersister(object):
     """
 
     def __post_init__(self):
-        self.parser = DynamicDataParser(self.sql_file)
+        self.parser = self._create_parser(self.sql_file)
         self.conn_manager.register_persister(self)
+
+    def _create_parser(self, sql_file: Path) -> DynamicDataParser:
+        return DynamicDataParser(sql_file)
 
     @property
     def sql_entries(self) -> Dict[str, str]:
