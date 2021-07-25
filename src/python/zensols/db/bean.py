@@ -197,6 +197,7 @@ class DbPersister(object):
     :class:`DynamicDataParser`).
 
     """
+
     conn_manager: ConnectionManager = field()
     """Used to create DB-API connections."""
 
