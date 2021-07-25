@@ -475,7 +475,10 @@ class InsertableBeanDbPersister(ReadOnlyBeanDbPersister):
         initializer.
 
         """
-        curid = self.insert_row(*bean.get_insert_row())
+        row = bean.get_insert_row()
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f'inserting row: {row}')
+        curid = self.insert_row(*row)
         bean.id = curid
         return curid
 
