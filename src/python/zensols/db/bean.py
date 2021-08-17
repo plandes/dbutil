@@ -98,6 +98,17 @@ class ConnectionManager(ABC):
                 map_fn: Callable) -> Tuple[Union[dict, tuple, pd.DataFrame]]:
         """Execute SQL on a database connection.
 
+        The ``row_factory`` tells the method how to interpret the row data in
+        to an object that's returned.  It can be one of:
+
+            * ``tuple``: tuples (the default)
+            * ``dict``: for dictionaries
+            * ``pandas``: for a :class:`pandas.DataFrame`
+            * otherwise: a function or class
+
+        Compare this with ``map_fn``, which transforms the data that's given to
+        the ``row_factory``.
+
         :param conn: the connection object with the database
 
         :param sql: the string SQL to execute
@@ -105,13 +116,10 @@ class ConnectionManager(ABC):
         :param params: the parameters given to the SQL statement (populated
                        with ``?``) in the statement
 
-        :param row_factory:
-            informs how to create result sets, which is one of:
+        :param row_factory: ``tuple``, ``dict``, ``pandas`` or a function
 
-                * ``tuple``: tuples (the default)
-                * ``dict``: for dictionaries
-                * ``pandas``: for a :class:`pandas.DataFrame`
-                * otherwise: a function or class
+        :param map_fn: a function that transforms row data given to the
+                       ``row_factory``
 
         :see: :meth:`.DbPersister.execute`.
 
@@ -262,17 +270,26 @@ class DbPersister(object):
             Tuple[Union[dict, tuple, pd.DataFrame]]:
         """Execute SQL on a database connection.
 
-        :param sql: the string SQL to execute
-
-        :param params: the parameters given to the SQL statement (populated
-                       with ``?``) in the statement
-
-        :param row_factory: informs how to create result sets, which is one of:
+        The ``row_factory`` tells the method how to interpret the row data in
+        to an object that's returned.  It can be one of:
 
             * ``tuple``: tuples (the default)
             * ``dict``: for dictionaries
             * ``pandas``: for a :class:`pandas.DataFrame`
             * otherwise: a function or class
+
+        Compare this with ``map_fn``, which transforms the data that's given to
+        the ``row_factory``.
+
+        :param sql: the string SQL to execute
+
+        :param params: the parameters given to the SQL statement (populated
+                       with ``?``) in the statement
+
+        :param row_factory: ``tuple``, ``dict``, ``pandas`` or a function
+
+        :param map_fn: a function that transforms row data given to the
+                       ``row_factory``
 
         """
         row_factory = self.row_factory if row_factory is None else row_factory
