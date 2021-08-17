@@ -105,12 +105,13 @@ class ConnectionManager(ABC):
         :param params: the parameters given to the SQL statement (populated
                        with ``?``) in the statement
 
-        :param row_factory: informs how to create result sets, which is one of:
+        :param row_factory:
+            informs how to create result sets, which is one of:
 
-            * ``tuple``: tuples (the default)
-            * ``dict``: for dictionaries
-            * ``pandas``: for a :class:`pandas.DataFrame`
-            * otherwise: a function or class
+                * ``tuple``: tuples (the default)
+                * ``dict``: for dictionaries
+                * ``pandas``: for a :class:`pandas.DataFrame`
+                * otherwise: a function or class
 
         :see: :meth:`.DbPersister.execute`.
 
