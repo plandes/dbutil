@@ -47,6 +47,7 @@ class DataClassDbPersister(BeanDbPersister):
 
     """
     bean_class: Type[dataclass] = field(default=None)
+    """The data class that is CRUD'd for DB operations."""
 
     def __post_init__(self):
         self.row_factory = self.bean_class
