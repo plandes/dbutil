@@ -200,14 +200,14 @@ class DbPersister(object):
     """CRUDs data to/from a DB-API connection.
 
     """
-    sql_file: Path = field()
+    conn_manager: ConnectionManager = field()
+    """Used to create DB-API connections."""
+
+    sql_file: Path = field(default=None)
     """The text file containing the SQL statements (see
     :class:`DynamicDataParser`).
 
     """
-
-    conn_manager: ConnectionManager = field()
-    """Used to create DB-API connections."""
 
     row_factory: Union[str, Type] = field(default='tuple')
     """The default method by which data is returned from ``execute_*`` methods.
