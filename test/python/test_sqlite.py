@@ -24,7 +24,7 @@ class TestSqlLite(SqliteTestCase):
         persister.conn_manager.drop()
         self.assertFalse(db_path.exists())
 
-    def Xtest_stash(self):
+    def test_stash(self):
         def key_change():
             stash.dump('5', peep)
 
