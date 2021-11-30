@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [0.0.12] - 2021-11-30
+### Added
+- Data classes are supported and need not inherit from `Bean`.
+- More documentation and examples.
+
+
 ## [0.0.11] - 2021-03-10
 ### Changed
 - Fixed doc.
@@ -81,7 +87,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/dbutil/compare/v0.0.11...HEAD
+[Unreleased]: https://github.com/plandes/dbutil/compare/v0.0.12...HEAD
+[0.0.12]: https://github.com/plandes/dbutil/compare/v0.0.11...v0.0.12
 [0.0.11]: https://github.com/plandes/dbutil/compare/v0.0.10...v0.0.11
 [0.0.10]: https://github.com/plandes/dbutil/compare/v0.0.9...v0.0.10
 [0.0.9]: https://github.com/plandes/dbutil/compare/v0.0.8...v0.0.9
