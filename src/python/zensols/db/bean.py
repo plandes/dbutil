@@ -152,7 +152,7 @@ class ConnectionManager(ABC):
         finally:
             cur.close()
 
-    def execute_no_read(self, conn, sql, params) -> int:
+    def execute_no_read(self, conn: Any, sql: str, params: Tuple[Any]) -> int:
         """See :meth:`.DbPersister.execute_no_read`.
 
         """
@@ -487,13 +487,17 @@ class InsertableBeanDbPersister(ReadOnlyBeanDbPersister):
         return self.conn_manager.insert_rows(
             conn, sql, rows, errors, set_id_fn, map_fn)
 
+    def _get_insert_row(self, bean: Bean) -> Tuple[Any]:
+        """Factory method to return the bean's insert row parameters."""
+        return bean.get_insert_row()
+
     def insert(self, bean: Bean) -> int:
-        """Insert a bean using the order of the values given in :meth:`get_insert_row`
-        as that of the SQL defined with entry :obj:`insert_name` given in the
-        initializer.
+        """Insert a bean using the order of the values given in
+        :meth:`Bean.get_insert_row` as that of the SQL defined with entry
+        :obj:`insert_name` given in the initializer.
 
         """
-        row = bean.get_insert_row()
+        row = self._get_insert_row(bean)
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f'inserting row: {row}')
         curid = self.insert_row(*row)
@@ -501,13 +505,13 @@ class InsertableBeanDbPersister(ReadOnlyBeanDbPersister):
         return curid
 
     def insert_beans(self, beans: Iterable[Any], errors: str = 'raise') -> int:
-        """Insert a bean using the order of the values given in :meth:`get_insert_row`
-        as that of the SQL defined with entry :obj:`insert_name` given in the
-        initializer.
+        """Insert a bean using the order of the values given in
+        :meth:`Bean.get_insert_row` as that of the SQL defined with entry
+        :obj:`insert_name` given in the initializer.
 
         """
         def map_fn(bean):
-            return bean.get_insert_row()
+            return self._get_insert_row(bean)
 
         def set_id_fn(bean, id):
             pass
