@@ -38,7 +38,7 @@ Binaries are also available on [pypi].
 
 ## Usage
 
-The [simple example] is detailed below:
+A simple example is detailed below, and also found in the [repo](example).
 
 
 ### SQL binding file
@@ -222,4 +222,3 @@ Copyright (c) 2020 - 2021 Paul Landes
 [PostgreSQL]: https://www.postgresql.org
 [dbutilpg]: https://github.com/plandes/dbutilpg
 [Pandas]: https://pandas.pydata.org
-[simple example]: example
