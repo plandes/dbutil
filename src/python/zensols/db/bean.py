@@ -327,7 +327,8 @@ class DbPersister(object):
     @connection()
     def execute_no_read(self, conn: Any, entry_name: str,
                         params: Tuple[Any] = ()) -> int:
-        """Execute SQL without reading data back.
+        """Just like :meth:`execute_by_name`, but execute SQL without reading data
+        back.
 
         :param entry_name: the key in the SQL file whose value is used as the
                            statement
