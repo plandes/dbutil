@@ -102,6 +102,7 @@ class ConnectionManager(ABC):
         to an object that's returned.  It can be one of:
 
             * ``tuple``: tuples (the default)
+            * ``identity``: return the unmodified form from the database
             * ``dict``: for dictionaries
             * ``pandas``: for a :class:`pandas.DataFrame`
             * otherwise: a function or class
@@ -127,11 +128,16 @@ class ConnectionManager(ABC):
         def second(cursor, row):
             return cls(*row)
 
+        def identity(cursor, row):
+            return row
+
         rfs = {'dict': self._dict_factory,
                'tuple': None,
                'pandas': None}
         if row_factory in rfs:
             rfac = rfs[row_factory]
+        elif row_factory == 'identity':
+            rfac = identity
         else:
             cls = row_factory
             rfac = second
