@@ -572,8 +572,8 @@ class BeanDbPersister(UpdatableBeanDbPersister):
     count_name: str = field(default=None)
     """The name of the SQL entry used to get a row count."""
 
-    def get_keys(self) -> list:
-        """Delete a row by ID.
+    def get_keys(self) -> Iterable[Any]:
+        """Return the unique keys from the bean table.
 
         """
         keys = self.execute_by_name(self.keys_name, row_factory='tuple')
