@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [0.2.0] - 2022-10-01
+### Added
+- Identity row factory.
+
+### Removed
+- Python 3.7 and 3.8 support.
+
+
 ## [0.0.12] - 2021-11-30
 ### Added
 - Data classes are supported and need not inherit from `Bean`.
@@ -87,7 +95,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/dbutil/compare/v0.0.12...HEAD
+[Unreleased]: https://github.com/plandes/dbutil/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/plandes/dbutil/compare/v0.0.12...v0.2.0
 [0.0.12]: https://github.com/plandes/dbutil/compare/v0.0.11...v0.0.12
 [0.0.11]: https://github.com/plandes/dbutil/compare/v0.0.10...v0.0.11
 [0.0.10]: https://github.com/plandes/dbutil/compare/v0.0.9...v0.0.10

@@ -1,2 +1,2 @@
-zensols.util>=1.4.1
-pandas>=1.1.5
+zensols.util~=1.11.1
+pandas~=1.4.2
