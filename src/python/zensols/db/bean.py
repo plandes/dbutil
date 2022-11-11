@@ -328,19 +328,27 @@ class DbPersister(object):
     @connection()
     def execute_sql_no_read(self, conn: Any, sql: str,
                             params: Tuple[Any] = ()) -> int:
+        """Execute SQL and return the database level information such as row IDs
+        rather than the results of a query.  Use this when inserting data to get
+        a row ID.
+
+        """
         return self.conn_manager.execute_no_read(conn, sql, params)
 
     @connection()
     def execute_no_read(self, conn: Any, entry_name: str,
                         params: Tuple[Any] = ()) -> int:
-        """Just like :meth:`execute_by_name`, but execute SQL without reading data
-        back.
+        """Just like :meth:`execute_by_name`, but return database level
+        information such as row IDs rather than the results of a query.  Use
+        this when inserting data to get a row ID.
 
         :param entry_name: the key in the SQL file whose value is used as the
                            statement
 
         :param capture_rowid: if ``True``, return the last row ID from the
                               cursor
+
+        :see: :meth:`execute_sql_no_read`
 
         """
         self._check_entry(entry_name)
