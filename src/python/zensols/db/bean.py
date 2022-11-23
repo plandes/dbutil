@@ -9,7 +9,7 @@ from abc import abstractmethod, ABC
 import logging
 from pathlib import Path
 import pandas as pd
-from zensols.persist import resource, Stash
+from zensols.persist import resource
 from zensols.db import DynamicDataParser
 
 logger = logging.getLogger(__name__)
@@ -597,49 +597,3 @@ class BeanDbPersister(UpdatableBeanDbPersister):
         else:
             # SQLite has a bug that returns one row with all null values
             return sum(1 for _ in self.get_keys())
-
-
-@dataclass
-class BeanStash(Stash):
-    """A stash that uses a backing DB-API backed :class:`BeanDbPersister`.
-
-    """
-    def __init__(self, persister: BeanDbPersister):
-        self.persister = persister
-
-    def load(self, name: str) -> Any:
-        return self.persister.get_by_id(int(name))
-
-    def exists(self, name: str) -> bool:
-        return self.persister.exists(int(name))
-
-    def dump(self, name: str, inst):
-        """Since this implementation can let the database auto-increment the
-        unique/primary key, beware of "changing" keys.
-
-        :raises DBError: if the key changes after inserted it will raise a
-                ``DBError``; for this reason, it's best to pass ``None`` as
-                ``name``
-
-        """
-        if name is not None:
-            id = int(name)
-            inst.id = id
-        else:
-            id = inst.id
-        if id is not None and self.exists(id):
-            self.persister.update(inst)
-        else:
-            self.persister.insert(inst)
-        if id is not None and inst.id != id:
-            raise DBError(f'unexpected key change: {inst.id} != {id}')
-        return inst
-
-    def delete(self, name):
-        self.persister.delete(name)
-
-    def keys(self):
-        return self.persister.get_keys()
-
-    def __len__(self):
-        return self.persister.get_count()
