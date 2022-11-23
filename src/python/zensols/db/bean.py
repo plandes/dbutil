@@ -251,7 +251,7 @@ class DbPersister(object):
             logger.debug('creating connection')
         return self.conn_manager.create()
 
-    def _dispose_connection(self, conn):
+    def _dispose_connection(self, conn: Any):
         """Close the connection to the database.
 
         :param conn: the connection to release
@@ -261,7 +261,7 @@ class DbPersister(object):
             logger.debug(f'closing connection {conn}')
         self.conn_manager.dispose(conn)
 
-    def _check_entry(self, name):
+    def _check_entry(self, name: str):
         if name is None:
             raise DBError('no defined SQL entry for persist function')
         if len(name) == 0:
