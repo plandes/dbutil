@@ -63,8 +63,7 @@ class AlternateKeyBeanStash(BeanStash):
     some other column and resolves to the unique primary key.
 
     The domain and range of the function (:meth:`_key_to_id`) that maps
-    alternate keys to unique primary keys can be anything.  However, it will
-    usually be a string to a long (:class:`int`).
+    alternate keys to unique primary keys ate strings.
 
     .. document private functions
     .. automethod:: _key_to_id
@@ -78,7 +77,7 @@ class AlternateKeyBeanStash(BeanStash):
     keys_name: str = field()
     """The select method SQL name that selects the alternate in :meth:`keys`."""
 
-    def _key_to_id(self, name: Any) -> Optional[Any]:
+    def _key_to_id(self, name: str) -> Optional[str]:
         """Maps alternate keys to unique primary keys.
 
         :param name: the alternate key, which is usually a more client friendly
@@ -92,7 +91,7 @@ class AlternateKeyBeanStash(BeanStash):
             self.key_to_id_name, params=(name,),
             row_factory='identity')
         if row is not None:
-            return row[0]
+            return str(row[0])
 
     def load(self, name: str) -> Any:
         return super().load(self._key_to_id(name))
