@@ -423,10 +423,10 @@ class ReadOnlyBeanDbPersister(DbPersister):
     select_name: str = field(default=None)
     """The name of the SQL entry used to select data/class."""
 
-    select_by_id: str = field(default=None)
+    select_by_id_name: str = field(default=None)
     """The name of the SQL entry used to select a single row by unique ID."""
 
-    select_exists: str = field(default=None)
+    select_exists_name: str = field(default=None)
     """The name of the SQL entry used to determine if a row exists by unique
     ID.
 
@@ -445,7 +445,7 @@ class ReadOnlyBeanDbPersister(DbPersister):
 
         """
         rows = self.execute_by_name(
-            self.select_by_id, params=(id,), row_factory=self.row_factory)
+            self.select_by_id_name, params=(id,), row_factory=self.row_factory)
         if len(rows) > 0:
             return rows[0]
 
@@ -454,11 +454,11 @@ class ReadOnlyBeanDbPersister(DbPersister):
         database.  Otherwise return ``False``.
 
         """
-        if self.select_exists is None:
+        if self.select_exists_name is None:
             return self.get_by_id(id) is not None
         else:
             cnt = self.execute_by_name(
-                self.select_exists, params=(id,), row_factory='tuple')
+                self.select_exists_name, params=(id,), row_factory='tuple')
             return cnt[0][0] == 1
 
 

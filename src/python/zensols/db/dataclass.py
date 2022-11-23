@@ -25,7 +25,6 @@ class DataClassDynamicDataParser(DynamicDataParser):
     """The name of the column that has the unique identifier of the row/object.
 
     """
-
     def __init__(self, dd_path: Path, bean_class: Type):
         super().__init__(dd_path)
         if not dataclasses.is_dataclass(bean_class):
