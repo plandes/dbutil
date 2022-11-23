@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+### Changed
+- Rename add `_name` to `select_by_id` and `select_exists` to confirm with
+  other selection attributes in `DbPersister`.
+
+
 ## [0.2.0] - 2022-10-01
 ### Added
 - Identity row factory.
