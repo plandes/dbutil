@@ -26,7 +26,6 @@ class SqliteConnectionManager(ConnectionManager):
     :class:`.DBError` is raised (see :meth:`create`).
 
     """
-
     def create(self) -> sqlite3.Connection:
         """Create a connection by accessing the SQLite file.
 
