@@ -98,10 +98,7 @@ class AlternateKeyBeanStash(BeanStash):
 
     def exists(self, name: str) -> bool:
         id: Optional[Any] = self._key_to_id(name)
-        if id is None:
-            return False
-        else:
-            return super().exists(id)
+        return id is not None
 
     def dump(self, name: str, inst: Any):
         return super().dump(self._key_to_id(name), inst)
