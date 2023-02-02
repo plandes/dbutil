@@ -8,9 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [1.0.0] - 2023-02-02
 ### Changed
 - Rename add `_name` to `select_by_id` and `select_exists` to confirm with
   other selection attributes in `DbPersister`.
+- Updated [zensols.util] to 1.12.0.
 
 
 ## [0.2.0] - 2022-10-01
@@ -100,7 +102,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/dbutil/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/plandes/dbutil/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/plandes/dbutil/compare/v0.2.0...v1.0.0
 [0.2.0]: https://github.com/plandes/dbutil/compare/v0.0.12...v0.2.0
 [0.0.12]: https://github.com/plandes/dbutil/compare/v0.0.11...v0.0.12
 [0.0.11]: https://github.com/plandes/dbutil/compare/v0.0.10...v0.0.11
