@@ -3,7 +3,7 @@
 """
 __author__ = 'Paul Landes'
 
-from typing import Type, List, Tuple, Any
+from typing import Type, List, Tuple, Any, ClassVar
 from dataclasses import dataclass, field, fields
 import dataclasses
 import logging
@@ -21,7 +21,7 @@ class DataClassDynamicDataParser(DynamicDataParser):
     :see: :class:`.DataClassDbPersister`
 
     """
-    ID_FIELD = 'id'
+    ID_FIELD: ClassVar[str] = 'id'
     """The name of the column that has the unique identifier of the row/object.
 
     """

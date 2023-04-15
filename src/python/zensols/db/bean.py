@@ -159,7 +159,17 @@ class ConnectionManager(ABC):
             cur.close()
 
     def execute_no_read(self, conn: Any, sql: str, params: Tuple[Any]) -> int:
-        """See :meth:`.DbPersister.execute_no_read`.
+        """Return database level information such as row IDs rather than the
+        results of a query.  Use this when inserting data to get a row ID.
+
+        :param conn: the connection object with the database
+
+        :param sql: the SQL statement used on the connection's cursor
+
+        :param params: the parameters given to the SQL statement (populated
+                       with ``?``) in the statement
+
+        :see: :meth:`.DbPersister.execute_no_read`.
 
         """
         cur = conn.cursor()
@@ -175,7 +185,19 @@ class ConnectionManager(ABC):
     def insert_rows(self, conn: Any, sql: str, rows: Iterable[Any],
                     errors: str, set_id_fn: Callable,
                     map_fn: Callable) -> int:
-        """See :meth:`.InsertableBeanDbPersister.insert_rows`.
+        """Insert a tuple of rows in the database and return the current row ID.
+
+        :param rows: a sequence of tuples of data (or an object to be
+                     transformed, see ``map_fn`` in column order of the SQL
+                     provided by the entry :obj:`insert_name`
+
+        :param errors: if this is the string ``raise`` then raise an error on
+                       any exception when invoking the database execute
+
+        :param map_fn: if not ``None``, used to transform the given row in to a
+                       tuple that is used for the insertion
+
+        See :meth:`.InsertableBeanDbPersister.insert_rows`.
 
         """
         cur = conn.cursor()
@@ -237,11 +259,11 @@ class DbPersister(object):
         return self.parser.sections
 
     @property
-    def metadata(self):
+    def metadata(self) -> Dict[str, str]:
         """Return the metadata associated with the SQL file.
 
         """
-        return self.parser.meta
+        return self.parser.metadata
 
     def _create_connection(self):
         """Create a connection to the database.
@@ -305,9 +327,27 @@ class DbPersister(object):
     def execute_by_name(self, name: str, params: Tuple[Any] = (),
                         row_factory: Union[str, Callable] = None,
                         map_fn: Callable = None):
-        """Just like :meth:`execute` but look up the SQL.
+        """Just like :meth:`execute` but look up the SQL statement to execute on
+        the database connection.
 
-        :param name: the name of the SQL entry used for the query
+        The ``row_factory`` tells the method how to interpret the row data in
+        to an object that's returned.  It can be one of:
+
+            * ``tuple``: tuples (the default)
+            * ``dict``: for dictionaries
+            * ``pandas``: for a :class:`pandas.DataFrame`
+            * otherwise: a function or class
+
+        Compare this with ``map_fn``, which transforms the data that's given to
+        the ``row_factory``.
+
+        :param params: the parameters given to the SQL statement (populated
+                       with ``?``) in the statement
+
+        :param row_factory: ``tuple``, ``dict``, ``pandas`` or a function
+
+        :param map_fn: a function that transforms row data given to the
+                       ``row_factory``
 
         :see: :meth:`execute`
 
@@ -485,9 +525,9 @@ class InsertableBeanDbPersister(ReadOnlyBeanDbPersister):
                     map_fn: Callable = None) -> int:
         """Insert a tuple of rows in the database and return the current row ID.
 
-        :param row: a sequence of tuples of data (or an object to be
-                    transformed, see ``map_fn`` in column order of the SQL
-                    provided by the entry :obj:`insert_name`
+        :param rows: a sequence of tuples of data (or an object to be
+                     transformed, see ``map_fn`` in column order of the SQL
+                     provided by the entry :obj:`insert_name`
 
         :param errors: if this is the string ``raise`` then raise an error on
                        any exception when invoking the database execute

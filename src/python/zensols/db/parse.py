@@ -4,7 +4,7 @@ manipulation language (DML) files.
 """
 __author__ = 'Paul Landes'
 
-from typing import Tuple, Dict, List, Iterable
+from typing import Tuple, Dict, List, Iterable, ClassVar
 import logging
 import re
 import itertools as it
@@ -32,9 +32,11 @@ class DynamicDataParser(object):
          'create_tables,create_idx'}
 
     """
-    COMMENT_PAT = re.compile(r'^--.*')
-    SEC_START_PAT = re.compile(r'^-- name=([a-zA-Z0-9_]+)')
-    META_PAT = re.compile(r'^-- meta=([a-zA-Z0-9_]+)=(.+)$')
+    COMMENT_PAT: ClassVar[re.Pattern] = re.compile(r'^--.*')
+    SEC_START_PAT: ClassVar[re.Pattern] = re.compile(
+        r'^-- name=([a-zA-Z0-9_]+)')
+    META_PAT: ClassVar[re.Pattern] = re.compile(
+        r'^-- meta=([a-zA-Z0-9_]+)=(.+)$')
 
     def __init__(self, dd_path: Path):
         """Initialize.
@@ -84,7 +86,7 @@ class DynamicDataParser(object):
         return self._parse()[0]
 
     @property
-    def meta(self) -> Dict[str, str]:
+    def metadata(self) -> Dict[str, str]:
         """Return the meta data found int he parse object.
 
         """
@@ -95,7 +97,7 @@ class DynamicDataParser(object):
         CRUD.
 
         """
-        init_secs = self.meta['init_sections']
+        init_secs = self.metadata['init_sections']
         secs = init_secs.split(',')
         entries = map(lambda x: self.sections[x], secs)
         sts = map(lambda x: re.split(';[ \t\n]*', x, flags=re.MULTILINE),
