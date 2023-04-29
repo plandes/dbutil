@@ -53,6 +53,8 @@ class _CursorIterator(object):
         return self
 
     def __next__(self):
+        if self._cursor is None:
+            raise StopIteration
         try:
             return next(self._cursor)
         except StopIteration:
