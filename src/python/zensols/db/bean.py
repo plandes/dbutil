@@ -1,12 +1,13 @@
 """Basic CRUD utility classes
 
 """
+from __future__ import annotations
 __author__ = 'Paul Landes'
-
-from typing import Dict, Any, Tuple, Union, Callable, Iterable, Type
+from typing import Dict, Any, Tuple, Union, Callable, Iterable, Type, Optional
 from dataclasses import dataclass, field, fields
 from abc import abstractmethod, ABC
 import logging
+import traceback
 from pathlib import Path
 import pandas as pd
 from zensols.persist import resource
@@ -30,10 +31,60 @@ class connection(resource):
         super().__init__('_create_connection', '_dispose_connection')
 
 
+class _CursorIteration(object):
+    def __init__(self, mng: ConnectionManager, conn: Any, cursor: Any):
+        self._mng = mng
+        self._conn = conn
+        self._cursor = cursor
+
+    def __iter__(self) -> _CursorIteration:
+        return self
+
+    def __next__(self):
+        try:
+            return next(self._cursor)
+        except StopIteration:
+            try:
+                self.dispose()
+            finally:
+                raise StopIteration
+
+    def dispose(self):
+        if self._mng is not None:
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug('closing cursor iterable')
+            self._mng._do_dispose_connection = True
+            self._cursor.close()
+            self._mng.dispose(self._conn)
+            self._mng = None
+            self._conn = None
+            self._cursor = None
+
+
+class cursor(object):
+    def __init__(self, persister: DbPersister, sql: str = None,
+                 name: str = None, params: Tuple[Any, ...] = None):
+        self._curiter = persister._execute_iterate(
+            sql=sql,
+            name=name,
+            params=params)
+
+    def __enter__(self) -> Iterable[Any]:
+        return self._curiter
+
+    def __exit__(self, cls: Type[Exception], value: Optional[Exception],
+                 trace: traceback):
+        self._curiter.dispose()
+
+
+@dataclass
 class ConnectionManager(ABC):
     """Instance DB-API connection lifecycle.
 
     """
+    def __post_init__(self):
+        self._do_dispose_connection = True
+
     def register_persister(self, persister):
         """Register the persister used for this connection manager.
 
@@ -53,7 +104,10 @@ class ConnectionManager(ABC):
         """Close the connection to the database.
 
         """
-        conn.close()
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f'connection manager: closing {conn}')
+        if self._do_dispose_connection:
+            conn.close()
 
     @abstractmethod
     def drop(self):
@@ -78,7 +132,7 @@ class ConnectionManager(ABC):
         cols = tuple(map(lambda d: d[0], cursor.description))
         return pd.DataFrame(res, columns=cols)
 
-    def execute(self, conn: Any, sql: str, params: Tuple[Any],
+    def execute(self, conn: Any, sql: str, params: Tuple[Any, ...],
                 row_factory: Union[str, Callable],
                 map_fn: Callable) -> Tuple[Union[dict, tuple, pd.DataFrame]]:
         """Execute SQL on a database connection.
@@ -87,9 +141,13 @@ class ConnectionManager(ABC):
         to an object that's returned.  It can be one of:
 
             * ``tuple``: tuples (the default)
+
             * ``identity``: return the unmodified form from the database
+
             * ``dict``: for dictionaries
+
             * ``pandas``: for a :class:`pandas.DataFrame`
+
             * otherwise: a function or class
 
         Compare this with ``map_fn``, which transforms the data that's given to
@@ -110,7 +168,7 @@ class ConnectionManager(ABC):
         :see: :meth:`.DbPersister.execute`.
 
         """
-        def dict_row_factory(cursor: Any, row: Tuple[Any]):
+        def dict_row_factory(cursor: Any, row: Tuple[Any, ...]):
             return dict(map(lambda x: (x[1][0], row[x[0]]),
                             enumerate(cursor.description)))
 
@@ -118,30 +176,33 @@ class ConnectionManager(ABC):
             'dict': dict_row_factory,
             'tuple': lambda cursor, row: row,
             'identity': lambda cursor, row: row,
-            'map': None,
             'pandas': None,
         }.get(
             row_factory,
-            lambda cursor, row: row_factory(row)
+            lambda cursor, row: row_factory(*row)
         )
         cur: Any = conn.cursor()
         try:
             res = cur.execute(sql, params)
             if map_fn is not None:
-                if row_factory == 'map':
-                    for x in res:
-                        map_fn(x)
-                else:
-                    res = map(map_fn, res)
+                res = map(map_fn, res)
             if row_factory == 'pandas':
                 res = self._to_dataframe(res, cur)
-            if row_factory not in {'pandas', 'map'}:
+            if conn.row_factory is not None:
                 res = tuple(res)
             return res
         finally:
             cur.close()
 
-    def execute_no_read(self, conn: Any, sql: str, params: Tuple[Any]) -> int:
+    def _create_cursor(self, conn: Any, sql: str,
+                       params: Tuple[Any, ...]) -> Any:
+        """Create a cursor object from connection ``conn``."""
+        cur: Any = conn.cursor()
+        cur.execute(sql, params)
+        return cur
+
+    def execute_no_read(self, conn: Any, sql: str,
+                        params: Tuple[Any, ...]) -> int:
         """Return database level information such as row IDs rather than the
         results of a query.  Use this when inserting data to get a row ID.
 
@@ -226,7 +287,6 @@ class DbPersister(object):
     :see: :meth:`execute`.
 
     """
-
     def __post_init__(self):
         self.parser = self._create_parser(self.sql_file)
         self.conn_manager.register_persister(self)
@@ -275,7 +335,7 @@ class DbPersister(object):
             raise DBError(f"no entry '{name}' found in SQL configuration")
 
     @connection()
-    def execute(self, conn: Any, sql: str, params: Tuple[Any] = (),
+    def execute(self, conn: Any, sql: str, params: Tuple[Any, ...] = (),
                 row_factory: Union[str, Callable] = None,
                 map_fn: Callable = None) -> \
             Tuple[Union[dict, tuple, pd.DataFrame]]:
@@ -338,6 +398,18 @@ class DbPersister(object):
         self._check_entry(name)
         sql = self.sql_entries[name]
         return self.execute(sql, params, row_factory, map_fn)
+
+    @connection()
+    def _execute_iterate(self, conn: Any, params: Tuple[Any, ...] = (),
+                         sql: str = None, name: str = None):
+        if sql is None and name is None:
+            raise DBError('Both sql string and name can not be None')
+        if sql is None:
+            self._check_entry(name)
+            sql = self.sql_entries[name]
+        cur = self.conn_manager._create_cursor(conn, sql, params)
+        self.conn_manager._do_dispose_connection = False
+        return _CursorIteration(self.conn_manager, conn, cur)
 
     def execute_singleton_by_name(self, *args, **kwargs):
         """Just like :meth:`execute_by_name` except return only the first item or
