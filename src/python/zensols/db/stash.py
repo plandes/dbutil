@@ -22,7 +22,12 @@ class BeanStash(Stash):
         return self.persister.get_by_id(int(name))
 
     def exists(self, name: str) -> bool:
-        return self.persister.exists(int(name))
+        try:
+            name = int(name)
+        except ValueError:
+            # assume only number IDs
+            return False
+        return self.persister.exists(name)
 
     def dump(self, name: str, inst: Any):
         """Since this implementation can let the database auto-increment the
@@ -50,7 +55,7 @@ class BeanStash(Stash):
         self.persister.delete(int(name))
 
     def keys(self) -> Iterable[str]:
-        return self.persister.get_keys()
+        return map(str, self.persister.get_keys())
 
     def __len__(self) -> int:
         return self.persister.get_count()

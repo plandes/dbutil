@@ -56,7 +56,7 @@ class TestSqlLite(SqliteTestCase):
         persister.delete('1')
         self.assertEqual(1, len(stash))
         pid, peep = next(iter(stash))
-        self.assertEqual((2, 'id: 2, name: bob, age: 55'), (pid, str(peep)))
+        self.assertEqual(('2', 'id: 2, name: bob, age: 55'), (pid, str(peep)))
 
     def test_inst_persister(self):
         self._test_inst_persister()
