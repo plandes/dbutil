@@ -114,23 +114,28 @@ class ConnectionManager(ABC):
             return dict(map(lambda x: (x[1][0], row[x[0]]),
                             enumerate(cursor.description)))
 
-        rfac = {'dict': dict_row_factory,
-                'tuple': lambda cursor, row: row,
-                'identity': lambda cursor, row: row,
-                'pandas': None,
-                }.get(row_factory,
-                      lambda cursor, row: row_factory(*row))
-        conn.row_factory = rfac
-        cur = conn.cursor()
+        conn.row_factory = {
+            'dict': dict_row_factory,
+            'tuple': lambda cursor, row: row,
+            'identity': lambda cursor, row: row,
+            'map': None,
+            'pandas': None,
+        }.get(
+            row_factory,
+            lambda cursor, row: row_factory(row)
+        )
+        cur: Any = conn.cursor()
         try:
-            tupify = True
             res = cur.execute(sql, params)
             if map_fn is not None:
-                res = map(map_fn, res)
+                if row_factory == 'map':
+                    for x in res:
+                        map_fn(x)
+                else:
+                    res = map(map_fn, res)
             if row_factory == 'pandas':
                 res = self._to_dataframe(res, cur)
-                tupify = False
-            if tupify:
+            if row_factory not in {'pandas', 'map'}:
                 res = tuple(res)
             return res
         finally:
