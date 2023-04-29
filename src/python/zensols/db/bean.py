@@ -66,21 +66,6 @@ class ConnectionManager(ABC):
         """
         pass
 
-    @staticmethod
-    def _dict_factory(cursor: Any, row: Tuple[Any]):
-        """Create a default dictionary factory used by the cursor.
-
-        :param cursor: the database cursor object, which has a ``description``
-                       attribute
-
-        :param row: the row given by the database to be mapped to a ``dict``
-
-        """
-        d = {}
-        for idx, col in enumerate(cursor.description):
-            d[col[0]] = row[idx]
-        return d
-
     def _to_dataframe(self, res: Iterable[Any], cursor: Any) -> pd.DataFrame:
         """Return a Pandas dataframe from the results given by the database.
 
@@ -125,24 +110,17 @@ class ConnectionManager(ABC):
         :see: :meth:`.DbPersister.execute`.
 
         """
-        def second(cursor, row):
-            return cls(*row)
+        def dict_row_factory(cursor: Any, row: Tuple[Any]):
+            return dict(map(lambda x: (x[1][0], row[x[0]]),
+                            enumerate(cursor.description)))
 
-        def identity(cursor, row):
-            return row
-
-        rfs = {'dict': self._dict_factory,
-               'tuple': None,
-               'pandas': None}
-        if row_factory in rfs:
-            rfac = rfs[row_factory]
-        elif row_factory == 'identity':
-            rfac = identity
-        else:
-            cls = row_factory
-            rfac = second
-        if rfac is not None:
-            conn.row_factory = rfac
+        rfac = {'dict': dict_row_factory,
+                'tuple': lambda cursor, row: row,
+                'identity': lambda cursor, row: row,
+                'pandas': None,
+                }.get(row_factory,
+                      lambda cursor, row: row_factory(*row))
+        conn.row_factory = rfac
         cur = conn.cursor()
         try:
             tupify = True
