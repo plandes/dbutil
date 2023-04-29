@@ -31,13 +31,25 @@ class connection(resource):
         super().__init__('_create_connection', '_dispose_connection')
 
 
-class _CursorIteration(object):
+class _CursorIterator(object):
+    """Iterates throw the rows of the database using a cursor.
+
+    """
     def __init__(self, mng: ConnectionManager, conn: Any, cursor: Any):
+        """
+
+        :param mng: the connection manager to regulate database resources
+
+        :param conn: the connection to the database
+
+        :param cursor: the cursor to the database
+
+        """
         self._mng = mng
         self._conn = conn
         self._cursor = cursor
 
-    def __iter__(self) -> _CursorIteration:
+    def __iter__(self) -> _CursorIterator:
         return self
 
     def __next__(self):
@@ -62,8 +74,33 @@ class _CursorIteration(object):
 
 
 class cursor(object):
+    """Iterate through rows of a database.  The connection is automatically
+    closed once out of scope.
+
+    Example::
+
+        config_factory: ConfigFactory = ...
+        persister: DbPersister = config_factory.instance('person_db_persister')
+        with cursor(persister, name='select_people') as c:
+            for row in c:
+                print(row)
+
+    """
     def __init__(self, persister: DbPersister, sql: str = None,
-                 name: str = None, params: Tuple[Any, ...] = None):
+                 name: str = None, params: Tuple[Any, ...] = ()):
+        """Initialize with either ``name`` or ``sql`` (only one should be
+        ``None``).
+
+        :param persister: used to execute the SQL and obtain the cursor
+
+        :param sql: the string SQL to execute
+
+        :param name: the named SQL query in the :obj:`.DbPersister.sql_file`
+
+        :param params: the parameters given to the SQL statement (populated
+                       with ``?``) in the statement
+
+        """
         self._curiter = persister._execute_iterate(
             sql=sql,
             name=name,
@@ -85,11 +122,11 @@ class ConnectionManager(ABC):
     def __post_init__(self):
         self._do_dispose_connection = True
 
-    def register_persister(self, persister):
+    def register_persister(self, persister: DbPersister):
         """Register the persister used for this connection manager.
 
         :param persister: the persister used for connection management
-        :type persister: DbPersister
+
         """
         self.persister = persister
 
@@ -280,7 +317,6 @@ class DbPersister(object):
     :class:`DynamicDataParser`).
 
     """
-
     row_factory: Union[str, Type] = field(default='tuple')
     """The default method by which data is returned from ``execute_*`` methods.
 
@@ -384,6 +420,8 @@ class DbPersister(object):
         Compare this with ``map_fn``, which transforms the data that's given to
         the ``row_factory``.
 
+        :param name: the named SQL query in the :obj:`sql_file`
+
         :param params: the parameters given to the SQL statement (populated
                        with ``?``) in the statement
 
@@ -400,8 +438,8 @@ class DbPersister(object):
         return self.execute(sql, params, row_factory, map_fn)
 
     @connection()
-    def _execute_iterate(self, conn: Any, params: Tuple[Any, ...] = (),
-                         sql: str = None, name: str = None):
+    def _execute_iterate(self, conn: Any, sql: str, name: str,
+                         params: Tuple[Any, ...]):
         if sql is None and name is None:
             raise DBError('Both sql string and name can not be None')
         if sql is None:
@@ -409,7 +447,7 @@ class DbPersister(object):
             sql = self.sql_entries[name]
         cur = self.conn_manager._create_cursor(conn, sql, params)
         self.conn_manager._do_dispose_connection = False
-        return _CursorIteration(self.conn_manager, conn, cur)
+        return _CursorIterator(self.conn_manager, conn, cur)
 
     def execute_singleton_by_name(self, *args, **kwargs):
         """Just like :meth:`execute_by_name` except return only the first item or
