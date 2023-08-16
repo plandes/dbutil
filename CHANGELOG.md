@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [1.1.0] - 2023-08-16
+Functional and downstream moderate risk update release.
+
+### Added
+- Cursor iteration.
+
+### Changed
+- Renamed `DynamicDataParser.meta` -> `DynamicDataParser.metadata`
+- `BeanStash` always uses string keys per contract.
+- Simplify `ConnectionManager.execute` treatment of the `row_factory`
+  parameter.
+
+
 ## [1.0.0] - 2023-02-02
 ### Changed
 - Rename add `_name` to `select_by_id` and `select_exists` to confirm with
@@ -102,7 +115,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/dbutil/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/plandes/dbutil/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/plandes/dbutil/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/plandes/dbutil/compare/v0.2.0...v1.0.0
 [0.2.0]: https://github.com/plandes/dbutil/compare/v0.0.12...v0.2.0
 [0.0.12]: https://github.com/plandes/dbutil/compare/v0.0.11...v0.0.12
