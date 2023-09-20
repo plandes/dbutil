@@ -3,14 +3,16 @@
 """
 from __future__ import annotations
 __author__ = 'Paul Landes'
-from typing import Dict, Any, Tuple, Union, Callable, Iterable, Type, Optional
+from typing import (
+    Dict, Any, Tuple, Union, Callable, Iterable, Type, Optional, List
+)
 from dataclasses import dataclass, field, fields
 from abc import abstractmethod, ABC
 import logging
 import traceback
 from pathlib import Path
 import pandas as pd
-from zensols.persist import resource
+from zensols.persist import resource, chunks
 from zensols.db import DynamicDataParser
 
 logger = logging.getLogger(__name__)
@@ -220,6 +222,8 @@ class ConnectionManager(ABC):
             row_factory,
             lambda cursor, row: row_factory(*row)
         )
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f'sql: <{sql}>, params: {params}')
         cur: Any = conn.cursor()
         try:
             res = cur.execute(sql, params)
@@ -275,10 +279,16 @@ class ConnectionManager(ABC):
                      provided by the entry :obj:`insert_name`
 
         :param errors: if this is the string ``raise`` then raise an error on
-                       any exception when invoking the database execute
+                       any exception when invoking the database execute,
+                       otherwise use ``ignore`` to ignore errors
+
+        :param set_id_fn: a callable that is given the data to be inserted and
+                          the row ID returned from the row insert as parameters
 
         :param map_fn: if not ``None``, used to transform the given row in to a
                        tuple that is used for the insertion
+
+        :return: the ``rowid`` of the last row inserted
 
         See :meth:`.InsertableBeanDbPersister.insert_rows`.
 
@@ -372,6 +382,10 @@ class DbPersister(object):
         if name not in self.sql_entries:
             raise DBError(f"no entry '{name}' found in SQL configuration")
 
+    def _get_entry(self, name: str):
+        self._check_entry(name)
+        return self.sql_entries[name]
+
     @connection()
     def execute(self, conn: Any, sql: str, params: Tuple[Any, ...] = (),
                 row_factory: Union[str, Callable] = None,
@@ -435,6 +449,8 @@ class DbPersister(object):
         :see: :meth:`execute`
 
         """
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f'name: <{name}>, params: {params}')
         self._check_entry(name)
         sql = self.sql_entries[name]
         return self.execute(sql, params, row_factory, map_fn)
@@ -615,9 +631,8 @@ class InsertableBeanDbPersister(ReadOnlyBeanDbPersister):
         return self.execute_no_read(self.insert_name, params=row)
 
     @connection()
-    def insert_rows(self, conn: Any, rows: Iterable[Any], errors='raise',
-                    set_id_fn: Callable = None,
-                    map_fn: Callable = None) -> int:
+    def insert_rows(self, conn: Any, rows: Iterable[Any], errors: str = 'raise',
+                    set_id_fn: Callable = None, map_fn: Callable = None) -> int:
         """Insert a tuple of rows in the database and return the current row ID.
 
         :param rows: a sequence of tuples of data (or an object to be
@@ -627,8 +642,13 @@ class InsertableBeanDbPersister(ReadOnlyBeanDbPersister):
         :param errors: if this is the string ``raise`` then raise an error on
                        any exception when invoking the database execute
 
+        :param set_id_fn: a callable that is given the data to be inserted and
+                          the row ID returned from the row insert as parameters
+
         :param map_fn: if not ``None``, used to transform the given row in to a
                        tuple that is used for the insertion
+
+        :return: the ``rowid`` of the last row inserted
 
         """
         entry_name = self.insert_name
@@ -636,6 +656,36 @@ class InsertableBeanDbPersister(ReadOnlyBeanDbPersister):
         sql = self.sql_entries[entry_name]
         return self.conn_manager.insert_rows(
             conn, sql, rows, errors, set_id_fn, map_fn)
+
+    @connection()
+    def insert_dataframe(self, conn: Any, df: pd.DataFrame,
+                         errors: str = 'raise', set_id_fn: Callable = None,
+                         map_fn: Callable = None, chunk_size: int = 100) -> int:
+        """Like :meth:`insert_rows` but the data is taken a Pandas dataframe.
+
+        :param df: the dataframe from which the rows are drawn
+
+        :param set_id_fn: a callable that is given the data to be inserted and
+                          the row ID returned from the row insert as parameters
+
+        :param map_fn: if not ``None``, used to transform the given row in to a
+                       tuple that is used for the insertion
+
+        :param chuck_size: the number of rows inserted at a time, so the number
+                           of interactions with the database are at most the row
+                           count of the dataframe / ``chunk_size``x
+
+        :return: the ``rowid`` of the last row inserted
+
+        """
+        entry_name: str = self.insert_name
+        sql: str = self._get_entry(entry_name)
+        row_id: int
+        rows: List[Tuple[Any, ...]]
+        for rows in chunks(df.itertuples(name=None, index=False), chunk_size):
+            row_id = self.conn_manager.insert_rows(
+                conn, sql, rows, errors, set_id_fn, map_fn)
+        return row_id
 
     def _get_insert_row(self, bean: Bean) -> Tuple[Any]:
         """Factory method to return the bean's insert row parameters."""
