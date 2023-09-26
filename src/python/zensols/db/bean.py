@@ -376,11 +376,11 @@ class DbPersister(object):
 
     def _check_entry(self, name: str):
         if name is None:
-            raise DBError('no defined SQL entry for persist function')
+            raise DBError('No defined SQL entry for persist function')
         if len(name) == 0:
-            raise DBError('non-optional entry not provided')
+            raise DBError('Non-optional entry not provided')
         if name not in self.sql_entries:
-            raise DBError(f"no entry '{name}' found in SQL configuration")
+            raise DBError(f"No entry '{name}' found in SQL configuration")
 
     def _get_entry(self, name: str):
         self._check_entry(name)
