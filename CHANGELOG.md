@@ -146,3 +146,4 @@ Functional and downstream moderate risk update release.
 
 
 [Pandas]: https://pandas.pydata.org
+[zensols.util]: https://github.com/plandes/util
