@@ -93,8 +93,8 @@ class DynamicDataParser(object):
         return self._parse()[1]
 
     def get_init_db_sqls(self) -> Iterable[str]:
-        """Return the set of statements that create all DB objects needed to fully
-        CRUD.
+        """Return the set of statements that create all DB objects needed to
+        fully CRUD.
 
         """
         init_secs = self.metadata['init_sections']

@@ -468,8 +468,8 @@ class DbPersister(object):
         return _CursorIterator(self.conn_manager, conn, cur)
 
     def execute_singleton_by_name(self, *args, **kwargs):
-        """Just like :meth:`execute_by_name` except return only the first item or
-        ``None`` if no results.
+        """Just like :meth:`execute_by_name` except return only the first item
+        or ``None`` if no results.
 
         """
         res = self.execute_by_name(*args, **kwargs)
@@ -525,16 +525,16 @@ class Bean(ABC):
         return {n: getattr(self, n) for n in self.get_attr_names()}
 
     def get_row(self) -> Tuple[Any]:
-        """Return a row of data meant to be printed.  This includes the unique ID of
-        the bean (see :meth:`get_insert_row`).
+        """Return a row of data meant to be printed.  This includes the unique
+        ID of the bean (see :meth:`get_insert_row`).
 
         """
         return tuple(map(lambda x: getattr(self, x), self.get_attr_names()))
 
     def get_insert_row(self) -> Tuple[Any]:
-        """Return a row of data meant to be inserted into the database.  This method
-        implementation leaves off the first attriubte assuming it contains a
-        unique (i.e. row ID) of the object.  See :meth:`get_row`.
+        """Return a row of data meant to be inserted into the database.  This
+        method implementation leaves off the first attriubte assuming it
+        contains a unique (i.e. row ID) of the object.  See :meth:`get_row`.
 
         """
         names = self.get_attr_names()
@@ -566,9 +566,9 @@ class Bean(ABC):
 
 @dataclass
 class ReadOnlyBeanDbPersister(DbPersister):
-    """A read-only persister that CRUDs data based on predefined SQL given in the
-    configuration.  The class optionally works with instances of :class:`.Bean`
-    when :obj:`row_factory` is set to the target bean class.
+    """A read-only persister that CRUDs data based on predefined SQL given in
+    the configuration.  The class optionally works with instances of
+    :class:`.Bean` when :obj:`row_factory` is set to the target bean class.
 
     """
     select_name: str = field(default=None)
@@ -584,15 +584,16 @@ class ReadOnlyBeanDbPersister(DbPersister):
     """
 
     def get(self) -> list:
-        """Return using the SQL provided by the entry identified by :obj:`select_name`.
+        """Return using the SQL provided by the entry identified by
+        :obj:`select_name`.
 
         """
         return self.execute_by_name(
             self.select_name, row_factory=self.row_factory)
 
     def get_by_id(self, id: int):
-        """Return an object using it's unique ID, which is could be the row ID in
-        SQLite.
+        """Return an object using it's unique ID, which is could be the row ID
+        in SQLite.
 
         """
         rows = self.execute_by_name(
@@ -601,8 +602,8 @@ class ReadOnlyBeanDbPersister(DbPersister):
             return rows[0]
 
     def exists(self, id: int) -> bool:
-        """Return ``True`` if there is a object with unique ID (or row ID) in the
-        database.  Otherwise return ``False``.
+        """Return ``True`` if there is a object with unique ID (or row ID) in
+        the database.  Otherwise return ``False``.
 
         """
         if self.select_exists_name is None:
@@ -732,8 +733,8 @@ class UpdatableBeanDbPersister(InsertableBeanDbPersister):
     """The name of the SQL entry used to delete data/class instance(s)."""
 
     def update_row(self, *row: Tuple[Any]) -> int:
-        """Update a row using the values of the row with the current unique ID as the
-        first element in ``*rows``.
+        """Update a row using the values of the row with the current unique ID
+        as the first element in ``*rows``.
 
         """
         where_row = (*row[1:], row[0])

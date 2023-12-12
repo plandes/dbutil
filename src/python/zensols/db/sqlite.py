@@ -22,8 +22,8 @@ class SqliteConnectionManager(ConnectionManager):
     """The SQLite database file to read or create."""
 
     create_db: bool = field(default=True)
-    """If ``True``, create the database if it does not already exist.  Otherwise,
-    :class:`.DBError` is raised (see :meth:`create`).
+    """If ``True``, create the database if it does not already exist.
+    Otherwise, :class:`.DBError` is raised (see :meth:`create`).
 
     """
     def create(self) -> sqlite3.Connection:
