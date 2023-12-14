@@ -151,12 +151,14 @@ class ConnectionManager(ABC):
             conn.close()
 
     @abstractmethod
-    def drop(self):
+    def drop(self) -> bool:
         """Remove all objects from the database or the database itself.
 
         For SQLite, this deletes the file.  In database implementations, this
         might drop all objects from the database.  Regardless, it is expected
         that ``create`` is able to recreate the database after this action.
+
+        :return: whether the database was dropped
 
         """
         pass
