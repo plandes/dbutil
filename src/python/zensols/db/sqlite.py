@@ -58,12 +58,34 @@ class SqliteConnectionManager(ConnectionManager):
                 conn.commit()
         return conn
 
-    def drop(self):
-        """Delete the SQLite database file from the file system.
-
-        """
+    def drop(self) -> bool:
+        """Delete the SQLite database file from the file system."""
         logger.info(f'deleting: {self.db_file}')
         if self.db_file.exists():
             self.db_file.unlink()
             return True
+        return False
+
+
+@dataclass
+class SqliteAttachConnectionManager(ConnectionManager):
+    """An SQLite connection factory that attaches a file as a database.
+
+    """
+    db_file: Path = field()
+    """The SQLite database file to read or create."""
+
+    database_name: str = field()
+    """The name of the database used to attach to :obj:`db_file`."""
+
+    def create(self) -> sqlite3.Connection:
+        """Create a connection as an attached database to a file."""
+        conn = sqlite3.connect(':memory:')
+        conn.execute(
+            f'ATTACH DATABASE ? AS {self.database_name}',
+            (str(self.db_file),))
+        return conn
+
+    def drop(self) -> bool:
+        """Dropping a memory SQLite connection is not supported."""
         return False
