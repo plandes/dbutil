@@ -1,34 +1,15 @@
 from pathlib import Path
-from io import StringIO
 from zensols.config import ImportIniConfig, ImportConfigFactory
 from zensols.persist import Stash
 from util import SqliteTestCase
 from sql import Person
 
 
-CONFIG: str = """
-[db_bin]
-class_name = zensols.db.sqlitestash.SqliteStash
-path = path: target/test.sqlite3
-
-[db_str]
-class_name = zensols.db.sqlitestash.SqliteStash
-path = ${db_bin:path}
-exclusive_str = True
-
-[db_json]
-class_name = zensols.db.sqlitestash.SqliteStash
-path = ${db_bin:path}
-encoder_decoder = eval({'import': ['jsonpickle']}): jsonpickle
-exclusive_str = True
-"""
-
-
 class TestStash(SqliteTestCase):
     def setUp(self):
         super().setUp()
         self.fac = ImportConfigFactory(
-            ImportIniConfig(StringIO(CONFIG)),
+            ImportIniConfig(Path('test-resources/sqlitestash.conf')),
             reload=True)
 
     def _test_init(self, stash: Stash):
