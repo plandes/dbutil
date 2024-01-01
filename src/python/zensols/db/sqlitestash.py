@@ -73,24 +73,20 @@ class SqliteStash(Stash):
     path: Path = field()
     """The directory of where to store the files."""
 
-    exclusive_str: bool = field(default=False)
-    """Whether to persist data as strings."""
-
-    encoder_decoder: SqliteStashEncoderDecoder = field(default=None)
+    encoder_decoder: SqliteStashEncoderDecoder = field(
+        default_factory=PickleSqliteStashEncoderDecoder)
     """Used to encode and decode the data with the SQLite database.  To use
     binary data, set this to an instance of
-    :class:`.PickleSqliteStashEncoderDecoder`.  To store JSON, set this to
-    (``pip install jsonpickle``) :mod:`jsonpickle`.  You can also write your own
-    by extending :class:`.SqliteStashEncoderDecoder`.
+
+    This should be set to:
+
+      * :class:`.SqliteStashEncoderDecoder` for storing text values
+      * :class:`.PickleSqliteStashEncoderDecoder` for storing binary data
+      * :mod:`jsonpickle` to store JSON (needs ``pip install jsonpickle``)
+
+    You can write your own by extending :class:`.SqliteStashEncoderDecoder`.
 
     """
-    def __post_init__(self):
-        if self.encoder_decoder is None:
-            if self.exclusive_str:
-                self.encoder_decoder = SqliteStashEncoderDecoder()
-            else:
-                self.encoder_decoder = PickleSqliteStashEncoderDecoder()
-
     @property
     @persisted('_persister')
     def persister(self) -> BeanDbPersister:
