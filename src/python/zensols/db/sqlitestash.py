@@ -80,9 +80,11 @@ class SqliteStash(Stash):
 
     This should be set to:
 
-      * :class:`.SqliteStashEncoderDecoder` for storing text values
-      * :class:`.PickleSqliteStashEncoderDecoder` for storing binary data
-      * :mod:`jsonpickle` to store JSON (needs ``pip install jsonpickle``)
+      * :class:`.SqliteStashEncoderDecoder`: store text values
+      * :class:`.PickleSqliteStashEncoderDecoder`: store binary data (default)
+      * :mod:`jsonpickle`: store JSON (needs ``pip install jsonpickle``); use
+        ``encoder_decoder = eval({'import': ['jsonpickle']}): jsonpickle`` in
+        application configurations
 
     You can write your own by extending :class:`.SqliteStashEncoderDecoder`.
 
