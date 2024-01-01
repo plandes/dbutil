@@ -6,3 +6,8 @@ PROJ_MODULES=		git python-doc python-doc-deploy
 
 
 include ./zenbuild/main.mk
+
+
+.PHONY:			testdeps
+testdeps:		deps
+			pip install jsonpickle
