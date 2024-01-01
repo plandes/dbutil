@@ -1,5 +1,6 @@
 from pathlib import Path
-from zensols.db import DBError, BeanStash
+from zensols.db import DBError
+from zensols.db.stash import BeanStash
 from sql import Person
 from util import SqliteTestCase
 
