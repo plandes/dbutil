@@ -8,6 +8,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+### Removed
+- Packages `zensols.db.stash`, `zensols.db.stash`, and `zensols.db.dataclass`
+  are no longer automatically imported.  You must now import these with their
+  full module name to use them.
+
+### Added
+- A `zensols.persist.Stash` SQLite implementation that needs no `DbPersister`.
+  It uses a unique primary key for stash keys and stores as either a string or
+  binary blob for the values.
+
+
 ## [1.2.0] - 2023-12-05
 ### Changed
 - Upgrade to [zensols.util] version 1.14.
