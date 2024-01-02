@@ -125,5 +125,9 @@ class SqliteStash(Stash):
     def keys(self) -> Iterable[str]:
         return map(str, self.persister.get_keys())
 
+    def clear(self):
+        if self.path.is_file():
+            self.path.unlink()
+
     def __len__(self) -> int:
         return self.persister.get_count()

@@ -52,9 +52,9 @@ class TestStash(SqliteTestCase):
         stash.dump('frank', 'germany')
         self.assertEqual(2, len(stash))
 
-        return
         # clear
         stash.clear()
+        self.assertFalse(Path('target/test.sqlite3').exists())
         self.assertEqual(0, len(stash))
         self.assertEqual(0, len(tuple(stash.keys())))
         self.assertEqual(0, len(tuple(stash.values())))
