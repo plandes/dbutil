@@ -6,6 +6,7 @@ __author__ = 'Paul Landes'
 
 from typing import Any, Iterable, Union
 from dataclasses import dataclass, field
+from abc import ABCMeta, abstractmethod
 import logging
 import pickle
 from io import BytesIO
@@ -13,20 +14,15 @@ from pathlib import Path
 from io import StringIO
 from zensols.persist import persisted, Stash
 from zensols.config import IniConfig, ImportConfigFactory
-from . import BeanDbPersister
+from . import DBError, ConnectionManager, BeanDbPersister
 
 logger = logging.getLogger(__name__)
 
 
-_SQLITE_STASH_CONFIG: str = """\
-[sqlite_conn_manager]
-class_name = zensols.db.sqlite.SqliteConnectionManager
-db_file = path: %(path)s
-
+_DBSTASH_PERSISTER_CONFIG: str = """\
 [db_persister]
 class_name = zensols.db.BeanDbPersister
 sql_file = resource(zensols.db): resources/sqlite-stash.sql
-conn_manager = instance: sqlite_conn_manager
 insert_name = insert_item
 select_by_id_name = select_item_by_id
 select_exists_name = select_item_exists_by_id
@@ -37,7 +33,7 @@ count_name = entries_count
 """
 
 
-class SqliteStashEncoderDecoder(object):
+class DbStashEncoderDecoder(object):
     """Encodes and decodes data for :class:`.SqliteStash`.
 
     """
@@ -48,7 +44,7 @@ class SqliteStashEncoderDecoder(object):
         return data
 
 
-class PickleSqliteStashEncoderDecoder(SqliteStashEncoderDecoder):
+class PickleDbStashEncoderDecoder(DbStashEncoderDecoder):
     """An implementation that encodes and decodes using :mod:`pickle`.
 
     """
@@ -64,37 +60,40 @@ class PickleSqliteStashEncoderDecoder(SqliteStashEncoderDecoder):
 
 
 @dataclass
-class SqliteStash(Stash):
+class DbStash(Stash, metaclass=ABCMeta):
     """A :class:`~zensols.persist.domain.Stash` implementation that uses an
     SQLite database to store data.  It creates a single table with only two
     columns: one for the (string) key and the other for the values.
 
     """
-    path: Path = field()
-    """The directory of where to store the files."""
-
-    encoder_decoder: SqliteStashEncoderDecoder = field(
-        default_factory=PickleSqliteStashEncoderDecoder)
+    encoder_decoder: DbStashEncoderDecoder = field(
+        default_factory=PickleDbStashEncoderDecoder)
     """Used to encode and decode the data with the SQLite database.  To use
     binary data, set this to an instance of
 
     This should be set to:
 
-      * :class:`.SqliteStashEncoderDecoder`: store text values
-      * :class:`.PickleSqliteStashEncoderDecoder`: store binary data (default)
+      * :class:`.DbStashEncoderDecoder`: store text values
+      * :class:`.PickleDbStashEncoderDecoder`: store binary data (default)
       * :mod:`jsonpickle`: store JSON (needs ``pip install jsonpickle``); use
         ``encoder_decoder = eval({'import': ['jsonpickle']}): jsonpickle`` in
         application configurations
 
-    You can write your own by extending :class:`.SqliteStashEncoderDecoder`.
+    You can write your own by extending :class:`.DbStashEncoderDecoder`.
 
     """
+    @abstractmethod
+    def _create_connection_manager(self) -> ConnectionManager:
+        pass
+
     @property
     @persisted('_persister')
     def persister(self) -> BeanDbPersister:
-        config: str = _SQLITE_STASH_CONFIG % {'path': self.path}
+        config: str = _DBSTASH_PERSISTER_CONFIG
         fac = ImportConfigFactory(IniConfig(StringIO(config)))
-        return fac('db_persister')
+        return fac(
+            name='db_persister',
+            conn_manager=self._create_connection_manager())
 
     def load(self, name: str) -> Any:
         inst: Any = self.persister.get_by_id(name)[0]
@@ -126,8 +125,19 @@ class SqliteStash(Stash):
         return map(str, self.persister.get_keys())
 
     def clear(self):
-        if self.path.is_file():
-            self.path.unlink()
+        self.persister.conn_manager.drop()
 
     def __len__(self) -> int:
         return self.persister.get_count()
+
+
+@dataclass
+class SqliteDbStash(DbStash):
+    path: Path = field(default=None)
+    """The directory of where to store the files."""
+
+    def _create_connection_manager(self) -> ConnectionManager:
+        from .sqlite import SqliteConnectionManager
+        if self.path is None:
+            raise DBError(f'No configured path for {type(self)} stash')
+        return SqliteConnectionManager(self.path)
