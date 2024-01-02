@@ -1,13 +1,19 @@
 ## makefile automates the build and deployment for python projects
 
-# type of project
+
+## Build system
+#
 PROJ_TYPE =		python
-PROJ_MODULES=		git python-doc python-doc-deploy
+PROJ_MODULES=		git python-doc python-doc-deploy python-resources
 
 
+## Includes
+#
 include ./zenbuild/main.mk
 
 
+## Targets
+#
 .PHONY:			testdeps
 testdeps:		deps
 			pip install jsonpickle
