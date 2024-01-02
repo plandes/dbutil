@@ -8,7 +8,7 @@ import logging
 from dataclasses import dataclass, field
 from pathlib import Path
 import sqlite3
-from zensols.db import DBError, ConnectionManager
+from . import DBError, ConnectionManager, DbStash
 
 logger = logging.getLogger(__name__)
 
@@ -89,3 +89,17 @@ class SqliteAttachConnectionManager(ConnectionManager):
     def drop(self) -> bool:
         """Dropping a memory SQLite connection is not supported."""
         return False
+
+
+@dataclass
+class SqliteDbStash(DbStash):
+    """A :class:`~zensols.persist.domain.Stash` implementation that uses an
+    SQLite database to store data.
+    """
+    path: Path = field(default=None)
+    """The directory of where to store the files."""
+
+    def _create_connection_manager(self) -> ConnectionManager:
+        if self.path is None:
+            raise DBError(f'No configured path for {type(self)} stash')
+        return SqliteConnectionManager(self.path)

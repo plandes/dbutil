@@ -9,9 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
 ### Removed
-- Packages `zensols.db.stash`, `zensols.db.stash`, and `zensols.db.dataclass`
-  are no longer automatically imported.  You must now import these with their
-  full module name to use them.
+- Packages `zensols.db.dataclass`, and `zensols.db.dataclass` are no longer
+  automatically imported.  You must now import these with their full module
+  name to use them.
 
 ### Added
 - A `zensols.persist.Stash` SQLite implementation that needs no `DbPersister`.

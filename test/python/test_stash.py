@@ -9,7 +9,7 @@ class TestStash(SqliteTestCase):
     def setUp(self):
         super().setUp()
         self.fac = ImportConfigFactory(
-            ImportIniConfig(Path('test-resources/sqlitestash.conf')),
+            ImportIniConfig(Path('test-resources/dbstash.conf')),
             reload=True)
 
     def _test_init(self, stash: Stash):
