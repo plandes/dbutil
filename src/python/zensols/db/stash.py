@@ -84,6 +84,7 @@ class DbStash(Stash, metaclass=ABCMeta):
     @property
     @persisted('_persister')
     def persister(self) -> BeanDbPersister:
+        """The persister used to interface with the database."""
         config: str = _DBSTASH_PERSISTER_CONFIG
         fac = ImportConfigFactory(IniConfig(StringIO(config)))
         return fac(name='db_persister',
