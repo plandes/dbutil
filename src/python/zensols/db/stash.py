@@ -91,8 +91,10 @@ class DbStash(Stash, metaclass=ABCMeta):
                    conn_manager=self._create_connection_manager())
 
     def load(self, name: str) -> Any:
-        inst: Any = self.persister.get_by_id(name)[0]
-        return self.encoder_decoder.decode(inst)
+        row: Tuple[Any] = self.persister.get_by_id(name)
+        if row is not None:
+            inst: Any = row[0]
+            return self.encoder_decoder.decode(inst)
 
     def exists(self, name: str) -> bool:
         return self.persister.exists(name)
