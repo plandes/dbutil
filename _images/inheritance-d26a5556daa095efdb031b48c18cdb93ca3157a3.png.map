@@ -1,0 +1,9 @@
+<map id="inheritance5083802a39" name="inheritance5083802a39">
+<area shape="rect" id="node1" title="Helper class that provides a standard way to create an ABC using" alt="" coords="474,5,546,36"/>
+<area shape="rect" id="node2" href="#zensols.db.bean.ConnectionManager" target="_top" title="Instance DB&#45;API connection lifecycle." alt="" coords="333,84,519,115"/>
+<area shape="rect" id="node4" title="A dictionary&#45;like pure virtual class for CRUDing data, most of which read" alt="" coords="559,84,631,115"/>
+<area shape="rect" id="node5" href="#zensols.db.sqlite.SqliteAttachConnectionManager" target="_top" title="An SQLite connection factory that attaches a file as a database." alt="" coords="5,163,287,193"/>
+<area shape="rect" id="node6" href="#zensols.db.sqlite.SqliteConnectionManager" target="_top" title="An SQLite connection factory." alt="" coords="311,163,541,193"/>
+<area shape="rect" id="node3" href="#zensols.db.stash.DbStash" target="_top" title="A relational database to store stash keys and values. &#160;It creates a" alt="" coords="566,163,657,193"/>
+<area shape="rect" id="node7" href="#zensols.db.sqlite.SqliteDbStash" target="_top" title="A :class:`~zensols.persist.domain.Stash` implementation that uses an" alt="" coords="543,241,679,272"/>
+</map>

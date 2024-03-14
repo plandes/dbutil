@@ -1,0 +1,63 @@
+zensols.db package
+==================
+
+Submodules
+----------
+
+zensols.db.bean
+---------------
+.. inheritance-diagram:: zensols.db.bean
+   :parts: 1
+
+.. automodule:: zensols.db.bean
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+zensols.db.dataclass
+--------------------
+.. inheritance-diagram:: zensols.db.dataclass
+   :parts: 1
+
+.. automodule:: zensols.db.dataclass
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+zensols.db.parse
+----------------
+.. inheritance-diagram:: zensols.db.parse
+   :parts: 1
+
+.. automodule:: zensols.db.parse
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+zensols.db.sqlite
+-----------------
+.. inheritance-diagram:: zensols.db.sqlite
+   :parts: 1
+
+.. automodule:: zensols.db.sqlite
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+zensols.db.stash
+----------------
+.. inheritance-diagram:: zensols.db.stash
+   :parts: 1
+
+.. automodule:: zensols.db.stash
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: zensols.db
+   :members:
+   :undoc-members:
+   :show-inheritance:

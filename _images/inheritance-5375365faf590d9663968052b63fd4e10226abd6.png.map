@@ -1,0 +1,10 @@
+<map id="inheritance9748d11cda" name="inheritance9748d11cda">
+<area shape="rect" id="node1" href="#zensols.db.bean.BeanDbPersister" target="_top" title="A class that contains the remaining CRUD funtionality the super class" alt="" coords="46,320,205,351"/>
+<area shape="rect" id="node3" href="#zensols.db.dataclass.DataClassDbPersister" target="_top" title="Persists instances of :class:`dataclasses.dataclass` by narrowing the" alt="" coords="26,399,225,429"/>
+<area shape="rect" id="node2" href="#zensols.db.bean.UpdatableBeanDbPersister" target="_top" title="A class that contains the remaining CRUD funtionality the super class" alt="" coords="5,241,245,272"/>
+<area shape="rect" id="node4" href="#zensols.db.dataclass.DataClassDynamicDataParser" target="_top" title="An SQL data parser that replaces ``${cols}`` in the SQL file with the" alt="" coords="347,84,613,115"/>
+<area shape="rect" id="node5" href="#zensols.db.parse.DynamicDataParser" target="_top" title="Parse a DDL/DML file meant also for prototyping." alt="" coords="388,5,572,36"/>
+<area shape="rect" id="node6" href="#zensols.db.bean.DbPersister" target="_top" title="CRUDs data to/from a DB&#45;API connection." alt="" coords="67,5,183,36"/>
+<area shape="rect" id="node8" href="#zensols.db.bean.ReadOnlyBeanDbPersister" target="_top" title="A read&#45;only persister that CRUDs data based on predefined SQL given in" alt="" coords="6,84,245,115"/>
+<area shape="rect" id="node7" href="#zensols.db.bean.InsertableBeanDbPersister" target="_top" title="A class that contains insert funtionality." alt="" coords="7,163,244,193"/>
+</map>

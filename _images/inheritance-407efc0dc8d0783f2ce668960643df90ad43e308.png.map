@@ -1,0 +1,9 @@
+<map id="inheritancee7f734f901" name="inheritancee7f734f901">
+<area shape="rect" id="node1" title="Helper class that provides a standard way to create an ABC using" alt="" coords="127,5,199,36"/>
+<area shape="rect" id="node4" title="A dictionary&#45;like pure virtual class for CRUDing data, most of which read" alt="" coords="127,84,199,115"/>
+<area shape="rect" id="node2" href="#zensols.db.stash.AlternateKeyBeanStash" target="_top" title="A stash that uses another key rather than some unique primary key" alt="" coords="5,241,219,272"/>
+<area shape="rect" id="node3" href="#zensols.db.stash.BeanStash" target="_top" title="A stash that uses a backing DB&#45;API backed :class:`BeanDbPersister`." alt="" coords="57,163,167,193"/>
+<area shape="rect" id="node5" href="#zensols.db.stash.DbStash" target="_top" title="A relational database to store stash keys and values. &#160;It creates a" alt="" coords="192,163,283,193"/>
+<area shape="rect" id="node6" href="#zensols.db.stash.DbStashEncoderDecoder" target="_top" title="Encodes and decodes data for :class:`.SqliteStash`." alt="" coords="447,5,673,36"/>
+<area shape="rect" id="node7" href="#zensols.db.stash.PickleDbStashEncoderDecoder" target="_top" title="An implementation that encodes and decodes using :mod:`pickle`." alt="" coords="423,84,697,115"/>
+</map>
