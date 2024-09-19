@@ -76,7 +76,9 @@ class _CursorIterator(object):
 
 @dataclass
 class AbstractDbPersister(object, metaclass=ABCMeta):
-    """
+    """An abstract class to CRUD data with basic operations and a connection to
+    the database.
+
     """
     conn_manager: ConnectionManager = field()
     """Used to create DB-API connections."""
@@ -191,7 +193,7 @@ class ConnectionManager(object, metaclass=ABCMeta):
         """
         pass
 
-    def dispose(self, conn):
+    def dispose(self, conn: Any):
         """Close the connection to the database.
 
         """
