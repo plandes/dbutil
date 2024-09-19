@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+### Changes
+- Refactored `ConnectionManager`, `connection` and other domain classes to
+  module `conn`.  This is a low risk refactoring since the new module was added
+  to the parent module imports.
+
+
 ## [1.3.1] - 2024-03-14
 ### Changes
 - Bug fix in `DbStash` that robustly handles missing results.
