@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   module `conn`.  This is a low risk refactoring since the new module was added
   to the parent module imports.
 
+### Added
+- Connection pooling with class `zensols.db.connpool.PooledConnectionManager`.
+
 
 ## [1.3.1] - 2024-03-14
 ### Changes
