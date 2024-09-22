@@ -6,7 +6,7 @@ __author__ = 'Paul Landes'
 from typing import List, Any
 from dataclasses import dataclass, field
 import logging
-from .conn import ConnectionManager
+from .conn import AbstractDbPersister, ConnectionManager
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +26,10 @@ class PooledConnectionManager(ConnectionManager):
     def __post_init__(self):
         super().__post_init__()
         self._pool: List[Any] = []
+
+    def register_persister(self, persister: AbstractDbPersister):
+        super().register_persister(persister)
+        self.delegate.register_persister(persister)
 
     @property
     def is_empty(self) -> bool:
