@@ -33,10 +33,10 @@ class SqliteConnectionManager(ConnectionManager):
                         :`obj:create_db`)
 
         """
-        db_file = self.db_file
+        db_file: Path = self.db_file
+        do_create: bool = False
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f'creating connection to {db_file}')
-        created = False
         if not db_file.exists():
             if not self.create_db:
                 raise DBError(f'database file {db_file} does not exist')
@@ -46,10 +46,10 @@ class SqliteConnectionManager(ConnectionManager):
                 db_file.parent.mkdir(parents=True)
             if logger.isEnabledFor(logging.INFO):
                 logger.info(f'creating sqlite db file: {db_file}')
-            created = True
+            do_create = True
         types = sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES
         conn = sqlite3.connect(str(db_file.absolute()), detect_types=types)
-        if created:
+        if do_create:
             logger.info('initializing database...')
             for sql in self.persister.parser.get_init_db_sqls():
                 if logger.isEnabledFor(logging.DEBUG):
