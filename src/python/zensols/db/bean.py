@@ -39,6 +39,16 @@ class DbPersister(AbstractDbPersister):
         return DynamicDataParser(sql_file)
 
     @property
+    def _sql_file(self) -> Path:
+        return self._sql_file_val
+
+    @_sql_file.setter
+    def _sql_file(self, sql_file: Path):
+        self._sql_file_val = sql_file
+        if hasattr(self, 'parser'):
+            self.parser.dd_path = sql_file
+
+    @property
     def sql_entries(self) -> Dict[str, str]:
         """Return a dictionary of names -> SQL statements from the SQL file.
 
@@ -159,6 +169,10 @@ class DbPersister(AbstractDbPersister):
         self._check_entry(entry_name)
         sql = self.sql_entries[entry_name]
         return self.conn_manager.execute_no_read(conn, sql, params)
+
+
+# keep the dataclass semantics, but allow for a setter
+DbPersister.sql_file = DbPersister._sql_file
 
 
 @dataclass

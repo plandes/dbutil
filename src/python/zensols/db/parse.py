@@ -5,6 +5,7 @@ manipulation language (DML) files.
 __author__ = 'Paul Landes'
 
 from typing import Tuple, Dict, List, Iterable, ClassVar
+from dataclasses import dataclass, field
 import logging
 import re
 import itertools as it
@@ -14,6 +15,7 @@ from zensols.persist import persisted
 logger = logging.getLogger(__name__)
 
 
+@dataclass
 class DynamicDataParser(object):
     """Parse a DDL/DML file meant also for prototyping.
 
@@ -38,13 +40,8 @@ class DynamicDataParser(object):
     META_PAT: ClassVar[re.Pattern] = re.compile(
         r'^-- meta=([a-zA-Z0-9_]+)=(.+)$')
 
-    def __init__(self, dd_path: Path):
-        """Initialize.
-
-        :param dd_path: the path of the file to parse
-
-        """
-        self.dd_path = dd_path
+    dd_path: Path = field()
+    """The path of the file to parse."""
 
     def _map_section_content(self, lines: List[str]) -> str:
         return '\n'.join(lines)
