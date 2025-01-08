@@ -85,12 +85,12 @@ apps = list: app
 
 # the connection manager, which is the DB binding and in our case SQLite
 [sqlite_conn_manager]
-class_name = zensols.db.SqliteConnectionManager
+class_name = zensols.db.sqlite.SqliteConnectionManager
 db_file = path: person.db
 
 # the persister binds the API to the SQL
 [person_persister]
-class_name = zensols.db.DataClassDbPersister
+class_name = zensols.db.dataclass.DataClassDbPersister
 bean_class = class: app.Person
 sql_file = person.sql
 conn_manager = instance: sqlite_conn_manager
