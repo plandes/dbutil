@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [1.4.0] - 2025-01-11
+### Removed
+- Support for Python 3.10.
+
+### Changed
+- Upgraded to [zensols.util] version 1.15.
+
+
 ## [1.3.2] - 2024-09-18
 ### Changes
 - Refactored `ConnectionManager`, `connection` and other domain classes to
@@ -153,7 +161,8 @@ Functional and downstream moderate risk update release.
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/dbutil/compare/v1.3.2...HEAD
+[Unreleased]: https://github.com/plandes/dbutil/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/plandes/dbutil/compare/v1.3.2...v1.4.0
 [1.3.2]: https://github.com/plandes/dbutil/compare/v1.3.1...v1.3.2
 [1.3.1]: https://github.com/plandes/dbutil/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/plandes/dbutil/compare/v1.2.0...v1.3.0
