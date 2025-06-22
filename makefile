@@ -4,16 +4,10 @@
 ## Build system
 #
 PROJ_TYPE =		python
-PROJ_MODULES=		git python-doc python-doc-deploy python-resources
+PROJ_MODULES=		python/test python/doc python/package python/deploy
+PY_DOC_DIST_NAME =	dbutil
 
 
 ## Includes
 #
 include ./zenbuild/main.mk
-
-
-## Targets
-#
-.PHONY:			testdeps
-testdeps:		deps
-			pip install jsonpickle
