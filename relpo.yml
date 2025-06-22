@@ -12,7 +12,7 @@ github:
 # other 'project' section metadata
 project:
   domain: zensols
-  name: dbutil
+  name: db
   short_description: Database convenience utilities
   long_description: >-
     A library of database convenience utilities, typically for creation of
