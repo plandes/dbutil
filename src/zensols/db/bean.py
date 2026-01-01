@@ -22,7 +22,7 @@ class DbPersister(AbstractDbPersister):
     """
     sql_file: Path = field(default=None)
     """The text file containing the SQL statements (see
-    :class:`DynamicDataParser`).
+    :class:`.DynamicDataParser`).
 
     """
     row_factory: Union[str, Type] = field(default='tuple')
@@ -342,7 +342,7 @@ class InsertableBeanDbPersister(ReadOnlyBeanDbPersister):
 
         :param chuck_size: the number of rows inserted at a time, so the number
                            of interactions with the database are at most the row
-                           count of the dataframe / ``chunk_size``x
+                           count of the dataframe / ``chunk_size``
 
         :return: the ``rowid`` of the last row inserted
 
