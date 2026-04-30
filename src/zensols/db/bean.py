@@ -344,12 +344,13 @@ class InsertableBeanDbPersister(ReadOnlyBeanDbPersister):
                            of interactions with the database are at most the row
                            count of the dataframe / ``chunk_size``
 
-        :return: the ``rowid`` of the last row inserted
+        :return: the ``rowid`` of the last row inserted or ``None`` if ``df`` is
+                 empty
 
         """
         entry_name: str = self.insert_name
         sql: str = self._get_entry(entry_name)
-        row_id: int
+        row_id: int = None
         rows: List[Tuple[Any, ...]]
         for rows in chunks(df.itertuples(name=None, index=False), chunk_size):
             row_id = self.conn_manager.insert_rows(

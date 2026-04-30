@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [1.5.1] - 2026-04-30
+### Changed
+- Fix bug when attempt to add rows of an empty Pandas dataframe.
+
+
 ## [1.5.0] - 2025-12-31
 ### Removed
 - Python 3.11 support.
@@ -178,7 +183,8 @@ Functional and downstream moderate risk update release.
 
 
 <!-- links -->
-[Unreleased]: https://github.com/plandes/dbutil/compare/v1.5.0...HEAD
+[Unreleased]: https://github.com/plandes/dbutil/compare/v1.5.1...HEAD
+[1.5.1]: https://github.com/plandes/dbutil/compare/v1.5.0...v1.5.1
 [1.5.0]: https://github.com/plandes/dbutil/compare/v1.4.1...v1.5.0
 [1.4.1]: https://github.com/plandes/dbutil/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/plandes/dbutil/compare/v1.3.2...v1.4.0
